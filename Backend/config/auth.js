@@ -16,6 +16,8 @@ export const userAuth = async (req, res, next) => {
 
     // ✅ Fetch full student data using decoded id
     const student = await Student.findById(decoded.id);
+    console.log("Student", student);
+    console.log("Decoded", decoded);
     if (!student) return res.status(404).send("Student not found");
 
     // ✅ Attach student to req.user
@@ -24,6 +26,6 @@ export const userAuth = async (req, res, next) => {
   } catch (err) {
     console.log("❌ Token:", token);
     console.log("❌ Req Cookies:", req.cookies);
-    res.status(401).send("ERROR: " + err.message);
+    res.status(401).send("ERROR OCCURED: " + err.message);
   }
 };

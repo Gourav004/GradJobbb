@@ -12,14 +12,14 @@ dotenv.config({ quiet: true });
 const app = express();
 
 // ✅ Step 2: Middlewares in correct order
-app.use(cookieParser()); // read cookies first
+app.use(express.json()); // parse JSON body
 app.use(
   cors({
     origin: "http://localhost:5173", // React frontend
     credentials: true, // allow cookies
   })
 );
-app.use(express.json()); // parse JSON body
+app.use(cookieParser()); // read cookies first
 
 // ✅ Step 3: Global request logger (optional)
 app.use((req, res, next) => {

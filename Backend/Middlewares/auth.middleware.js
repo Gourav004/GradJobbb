@@ -24,15 +24,11 @@ export const Signup = async (req, res) => {
     await newStudent.save();
 
     const token = jwt.sign({ id: newStudent._id }, "GRADJOB", {
-      expiresIn: "7d",
+      expiresIn: "1d",
     });
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // ✅ Localhost = false
-      sameSite: "now", // ✅ instead of "none",
-      path: "/",
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     return res.status(201).json({
@@ -60,13 +56,11 @@ export const login = async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: student._id }, "GRADJOB");
+    const token = jwt.sign({ id: student._id }, "GRADJOB", { expiresIn: "1h" });
 
     // ✅ cookie set karte waqt options lagana mat bhoolo
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // true in production (https)
-      sameSite: "lax",
     });
 
     console.log("✅ Token cookie set successfully");
