@@ -128,27 +128,54 @@ const LoginSignup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const url = isSignUp
         ? "http://localhost:5000/user/signup"
         : "http://localhost:5000/user/login";
+
+      // ✅ Payload alag kar diya (Signup vs Login)
       const payload = isSignUp
         ? formData
-        : { email: formData.email, password: formData.password };
-      const res = await axios.post(url, payload);
+        : {
+            email: formData.email,
+            password: formData.password,
+          };
 
+      // ✅ Axios me credentials allow karna bahut zaruri hai
+      const res = await axios.post(url, payload, {
+        withCredentials: true, // 👈 ye add karna must hai for cookies
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // ✅ Response se student data le lo
       const userData = res.data?.student;
+
       if (userData) {
-        // 1️⃣ Save in localStorage
+        // 1️⃣ LocalStorage me save
         localStorage.setItem("user", JSON.stringify(userData));
-        // 2️⃣ Update Redux state
+
+        // 2️⃣ Redux state update
         dispatch(addUser(userData));
       }
 
+      // ✅ Toast message
       toast.success(isSignUp ? "Signup Successful!" : "Login Successful!");
-      setFormData({ name: "", collegeID: "", email: "", password: "" });
+
+      // ✅ Form reset
+      setFormData({
+        name: "",
+        collegeID: "",
+        email: "",
+        password: "",
+      });
+
+      // ✅ Redirect
       navigate("/dashboard");
     } catch (err) {
+      console.error("Error:", err);
       toast.error(err.response?.data?.message || "Invalid Credentials");
     }
   };
