@@ -3,6 +3,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import JobCardSkeleton from "./JobsShimmer.jsx";
 
 function ViewJobs() {
   const dispatch = useDispatch();
@@ -29,7 +30,9 @@ function ViewJobs() {
   if (!jobs || !jobs.allJobs) {
     return (
       <div className="text-white bg-gray-900 min-h-screen flex justify-center items-center">
-        <h1 className="text-3xl font-bold">Loading jobs...</h1>
+        <h1 className="text-3xl font-bold">
+          <JobCardSkeleton />
+        </h1>
       </div>
     );
   }
@@ -37,43 +40,29 @@ function ViewJobs() {
   return (
     <div className="text-white bg-gray-950 min-h-screen p-8 font-sans">
       {/* Top Search Bar - SVG ke saath */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="relative flex-grow">
-          <input
-            type="text"
-            placeholder="Search jobs, companies, or skills..."
-            className="w-full pl-12 pr-4 py-3.5 rounded-lg bg-gray-800 border border-gray-700
-                       focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
-          />
-          {/* Stylish Search SVG */}
+
+      <a href="/" className="inline-block mb-6">
+        <button className="text-white px-4 font-semibold py-2 rounded-lg bg-white/15 backdrop-blur-md border border-white/30 shadow-md transition-all duration-300 hover:bg-white/25 active:scale-95 flex items-center">
           <svg
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth="2"
             stroke="currentColor"
+            className="h-5 w-5 mr-2" // Thoda sa bada icon
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
             />
           </svg>
-        </div>
-        <select className="p-3.5 rounded-lg bg-gray-800 border border-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-          <option>All Locations</option>
-          <option>Delhi</option>
-          <option>Pune</option>
-        </select>
-        <select className="p-3.5 rounded-lg bg-gray-800 border border-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-          <option>All Types</option>
-          <option>Full-time</option>
-          <option>Internship</option>
-        </select>
-      </div>
+          <span className="text-[14px]">Back to Home</span>{" "}
+          {/* Thoda sa bada text */}
+        </button>
+      </a>
 
-      <h1 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+      <h1 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-600">
         {jobs.message || "Available Job Openings"}
       </h1>
 
@@ -82,7 +71,7 @@ function ViewJobs() {
           <motion.div
             key={job._id}
             className="flex flex-col md:flex-row bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-700/50
-                       hover:border-purple-500/50 hover:shadow-purple-500/10 transition-all duration-300 group"
+                       hover:border-cyan-500/50 hover:shadow-cyan-500/10 transition-all duration-300 group"
             layout
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -92,7 +81,7 @@ function ViewJobs() {
             {/* Left Section - Job Info */}
             <div className="flex-grow md:w-3/4 pr-4 border-b md:border-b-0 md:border-r border-gray-700/50 pb-4 md:pb-0 md:pr-6">
               <div className="flex justify-between items-start mb-2">
-                <h2 className="text-2xl font-bold text-purple-400 group-hover:text-purple-300 transition-colors">
+                <h2 className="text-2xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">
                   {job.title}
                 </h2>
                 <div className="bg-orange-500 text-white text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
@@ -200,11 +189,11 @@ function ViewJobs() {
                 </p>
               </div>
               <motion.button
-                className="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg transition-all
-                                 hover:bg-purple-500 transform hover:scale-105 shadow-md hover:shadow-lg"
+                className="bg-cyan-600 text-white font-bold py-3 px-8 rounded-lg transition-all
+                                 hover:bg-cyan-500 transform hover:scale-105 shadow-md hover:shadow-lg"
                 whileHover={{
                   scale: 1.05,
-                  boxShadow: "0 8px 25px -5px rgba(168,85,247,0.4)",
+                  boxShadow: "0 8px 25px -5px rgba(22, 163, 164, 0.4)", // Cyan shadow
                 }}
                 whileTap={{ scale: 0.95 }}
               >
