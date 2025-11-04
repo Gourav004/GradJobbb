@@ -147,7 +147,7 @@ export default function StudentProfileEdit() {
         <div className="flex flex-col gap-4">
           <button
             type="submit"
-            className="flex items-center justify-center gap-2 
+            className="flex cursor-pointer items-center justify-center gap-2 
              bg-gradient-to-r from-cyan-500 to-blue-600 
              px-5 py-2 rounded-full font-semibold 
              text-white shadow-lg 
@@ -178,7 +178,7 @@ export default function StudentProfileEdit() {
           <button
             type="button"
             onClick={() => navigate("/studentProfile")}
-            className="flex items-center justify-center gap-2 border border-gray-600 text-gray-300 px-5 py-2 rounded-full font-medium hover:bg-gray-700/50 transition-all duration-300"
+            className="flex cursor-pointer items-center justify-center gap-2 border border-gray-600 text-gray-300 px-5 py-2 rounded-full font-medium hover:bg-gray-700/50 transition-all duration-300"
           >
             ✖ Cancel
           </button>
