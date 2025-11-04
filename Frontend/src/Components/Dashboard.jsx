@@ -9,10 +9,10 @@ import { removeUser } from "@/Store/userSlice";
 
 // --- Custom Hook to detect click outside ---
 // This is used for both the profile dropdown and the new sidebar
+
 const useClickOutside = (ref, handler) => {
   useEffect(() => {
     const listener = (event) => {
-      // Do nothing if clicking ref's element or descendent elements
       if (!ref.current || ref.current.contains(event.target)) {
         return;
       }
@@ -34,12 +34,19 @@ export default function App() {
   // --- STATE AND REFS ---
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const user = useSelector((store) => store.student);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const profileRef = useRef(null);
   const sidebarRef = useRef(null);
 
+  const [profile, setProfile] = useState("");
+  useEffect(async () => {
+    const res = await axios.get("http://localhost:5000/user/profile", {
+      withCredentials: true,
+    });
+    setProfile(res.data.student.name);
+    console.log("Res ", profile);
+  }, []);
   // --- HOOKS ---
   // Removed useSelector and useNavigate hooks as dependencies are not available.
 
@@ -257,10 +264,7 @@ export default function App() {
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700">
                   <img
                     className="w-full h-full object-cover"
-                    src={
-                      user?.profilePic || // Use user's pic if available
-                      "https://imgs.search.brave.com/aT0xgQwDvH5DvcMVLSu7j8PcNMFRxfHfLa4LWI7T8io/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni84ODk1Lzg4OTU0/NTgucG5nP3NlbXQ9/YWlzX3doaXRlX2xh/YmVs"
-                    }
+                    src="https://imgs.search.brave.com/aT0xgQwDvH5DvcMVLSu7j8PcNMFRxfHfLa4LWI7T8io/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni84ODk1Lzg4OTU0/NTgucG5nP3NlbXQ9/YWlzX3doaXRlX2xh/YmVs"
                     alt="profile"
                     onError={(e) => {
                       // Fallback in case image fails to load
@@ -271,7 +275,7 @@ export default function App() {
                   />
                 </div>
                 <div className="font-[20px] text-white/80 hidden sm:block">
-                  {user?.name || "Guest"}
+                  {profile || "Guest"}
                 </div>
               </button>
 

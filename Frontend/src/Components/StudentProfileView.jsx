@@ -37,41 +37,6 @@ function StudentProfileView() {
       <div className="absolute -z-10 top-0 left-0 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full"></div>
 
       {/* Back Button */}
-      <a
-        href="/dashboard"
-        className="inline-block mb-3 absolute top-5 left-5 cursor-pointer group"
-      >
-        <button
-          className="
-      flex items-center gap-2
-      bg-[#0d0d0d] border border-cyan-500/40
-      px-6 py-2 rounded-full font-semibold text-cyan-300
-      transition-all duration-300 ease-out
-      shadow-[0_0_10px_rgba(0,255,255,0.15)]
-      hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
-      hover:border-cyan-400
-      hover:scale-105
-      active:scale-95
-    "
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            stroke="currentColor"
-            className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-
-          <span className="text-[15px]">Back</span>
-        </button>
-      </a>
 
       {/* ================= PROFILE CARD ================= */}
       <div className="relative w-full max-w-7xl mx-auto bg-[#111111]/70 backdrop-blur-lg border border-gray-800 rounded-3xl shadow-2xl p-8 flex flex-col lg:flex-row flex-wrap items-center justify-between gap-8 transition-all duration-500 hover:shadow-[0_0_25px_rgba(0,255,255,0.2)] mt-16">
@@ -131,6 +96,42 @@ function StudentProfileView() {
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
               Edit Profile
+            </button>
+          </a>
+          <a
+            href="/dashboard"
+            className="inline-block mb-3  cursor-pointer group"
+          >
+            <button
+              className="
+      flex items-center gap-2
+      
+      bg-[#0d0d0d] border border-cyan-500/40
+      px-7 py-3 rounded-full font-semibold text-cyan-300
+      transition-all duration-300 ease-out
+      shadow-[0_0_10px_rgba(0,255,255,0.15)]
+      hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
+      hover:border-cyan-400
+      hover:scale-105
+      active:scale-95
+    "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                />
+              </svg>
+
+              <span className="text-[15px]">Dashboard</span>
             </button>
           </a>
         </div>
@@ -196,13 +197,18 @@ function StudentProfileView() {
           </h3>
           <p>
             <strong className="text-cyan-300">GitHub:</strong>{" "}
-            <a href={profile.githubLink && profile.githubLink} target="_blank">
+            <a
+              className={profile.githubLink ? "link" : ""}
+              href={profile.githubLink && profile.githubLink}
+              target="_blank"
+            >
               {profile.githubLink || "N/A"}
             </a>
           </p>
           <p>
             <strong className="text-cyan-300">LinkedIn:</strong>{" "}
             <a
+              className={profile.linkedinLink ? "link" : ""}
               href={profile.linkedinLink && profile.linkedinLink}
               target="_blank"
             >
