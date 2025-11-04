@@ -9,6 +9,9 @@ export const studentViewProfile = async (req, res) => {
       name: 1,
       email: 1,
       collegeID: 1,
+      phone: 1,
+      year: 1,
+      branch: 1,
       resumeLink: 1,
       githubLink: 1,
       linkedinLink: 1,
@@ -21,7 +24,7 @@ export const studentViewProfile = async (req, res) => {
 
     return res.status(200).json({
       message: "Profile fetched successfully",
-      yourProfile: student,
+      student,
     });
   } catch (error) {
     return res.status(500).json({ message: "ERROR", error: error.message });

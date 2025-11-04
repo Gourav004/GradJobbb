@@ -15,12 +15,20 @@ export const Signup = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const newStudent = new Student({
       name,
       email,
       password: hashedPassword,
       collegeID,
+      phone: "",
+      branch: "",
+      year: "",
+      resumeLink: "",
+      githubLink: "",
+      linkedinLink: "",
     });
+
     await newStudent.save();
 
     const token = jwt.sign({ id: newStudent._id }, "GRADJOB", {
@@ -33,12 +41,7 @@ export const Signup = async (req, res) => {
 
     return res.status(201).json({
       message: "Signup successful",
-      student: {
-        id: newStudent._id,
-        name: newStudent.name,
-        email: newStudent.email,
-        collegeID: newStudent.collegeID,
-      },
+      student: newStudent, // 👈 renamed from newStudent to student for consistency
     });
   } catch (err) {
     console.log("Signup Error:", err);
@@ -56,7 +59,7 @@ export const login = async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: student._id }, "GRADJOB", { expiresIn: "1h" });
+    const token = jwt.sign({ id: student._id }, "GRADJOB", { expiresIn: "1d" });
     console.log("TOken -> ", token);
     // ✅ cookie set karte waqt options lagana mat bhoolo
     res.cookie("token", token, {

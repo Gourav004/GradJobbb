@@ -108,8 +108,8 @@ const LoginSignup = () => {
   const [formData, setFormData] = useState({
     name: "",
     collegeID: "",
-    email: "test2@gmail.com",
-    password: "Test2@123",
+    email: "test@mail.com",
+    password: "Test@123", 
   });
 
   const dispatch = useDispatch();
@@ -119,7 +119,7 @@ const LoginSignup = () => {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) dispatch(addUser(storedUser));
-  }, [dispatch]);
+  }, []);
 
   const handleShowPassword = () => setShowPassword((prev) => !prev);
 

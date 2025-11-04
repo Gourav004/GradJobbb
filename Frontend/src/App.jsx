@@ -9,6 +9,7 @@ import appStore from "./Store/AppStore.jsx";
 import { Provider } from "react-redux";
 import StudentProfileView from "./Components/StudentProfileView.jsx";
 import ViewJobs from "./Components/ViewJobs.jsx";
+import EditProfile from "./Components/EditProfile.jsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/studentProfile" element={<StudentProfileView />} />
           <Route path="/jobs" element={<ViewJobs />} />
+          <Route path="/editProfile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>
     </Provider>

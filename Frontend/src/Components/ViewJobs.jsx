@@ -41,7 +41,10 @@ function ViewJobs() {
     <div className="text-white bg-gray-950 min-h-screen p-8 font-sans">
       {/* Top Search Bar - SVG ke saath */}
 
-      <a href="/" className="inline-block mb-6">
+      <a
+        href="/dashboard"
+        className="inline-block mb-6 hover:scale-105 cursor-pointer transition-all duration-300 "
+      >
         <button className="text-white px-4 font-semibold py-2 rounded-lg bg-white/15 backdrop-blur-md border border-white/30 shadow-md transition-all duration-300 hover:bg-white/25 active:scale-95 flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -57,13 +60,12 @@ function ViewJobs() {
               d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
             />
           </svg>
-          <span className="text-[14px]">Back to Home</span>{" "}
-          {/* Thoda sa bada text */}
+          <span className="text-[14px]">Back</span> {/* Thoda sa bada text */}
         </button>
       </a>
 
       <h1 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-600">
-        {jobs.message || "Available Job Openings"}
+        {"Available Job Openings"}
       </h1>
 
       <div className="space-y-6">

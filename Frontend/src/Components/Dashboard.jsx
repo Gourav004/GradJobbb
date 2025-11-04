@@ -259,7 +259,7 @@ export default function App() {
                     className="w-full h-full object-cover"
                     src={
                       user?.profilePic || // Use user's pic if available
-                      "https://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG.png"
+                      "https://imgs.search.brave.com/aT0xgQwDvH5DvcMVLSu7j8PcNMFRxfHfLa4LWI7T8io/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni84ODk1Lzg4OTU0/NTgucG5nP3NlbXQ9/YWlzX3doaXRlX2xh/YmVs"
                     }
                     alt="profile"
                     onError={(e) => {

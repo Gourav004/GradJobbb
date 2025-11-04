@@ -24,8 +24,6 @@ export const userAuth = async (req, res, next) => {
     req.user = student;
     next();
   } catch (err) {
-    console.log("❌ Token:", token);
-    console.log("❌ Req Cookies:", req.cookies);
     res.status(401).send("ERROR OCCURED: " + err.message);
   }
 };

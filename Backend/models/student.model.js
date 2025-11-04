@@ -29,10 +29,7 @@ const studentSchema = new mongoose.Schema(
     year: {
       type: String,
     },
-    phone: {
-      type: Number,
-      unique: true,
-    },
+
     resumeLink: {
       type: String,
       default: "",
