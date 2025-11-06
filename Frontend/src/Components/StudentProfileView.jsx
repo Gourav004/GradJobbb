@@ -217,7 +217,7 @@ function StudentProfileView() {
           {
             title: "Resume",
             content: (
-              <p>
+              <p className="text-gray-300 text-sm break-words whitespace-pre-wrap overflow-hidden">
                 <strong className="text-cyan-300">Link:</strong>{" "}
                 {profile.resumeLink || "Not uploaded"}
               </p>
