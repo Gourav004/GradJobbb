@@ -1,10 +1,9 @@
-import express from "express";
 import Admin from "../models/admin.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { emailRegex, passRegex } from "../regex.js";
 
-export const Signup = async (req, res) => {
+export const signup = async (req, res) => {
   try {
     const { name, email, password, collegeID } = req.body;
 
@@ -36,15 +35,11 @@ export const Signup = async (req, res) => {
 
     await newAdmin.save();
     //JWT
-    const token = jwt.sign({ id: newAdmin._id }, process.env.SECRET_KEY, {
+    const token = jwt.sign({ id: newAdmin._id }, "GRADJOB", {
       expiresIn: "1d",
     });
     console.log(token);
-    res.cookie("token", token, {
-      secure: false, // localhost => false, https => true
-      sameSite: "None", // cross-origin cookie allow
-      path: "/",
-    });
+    res.cookie("token", token);
 
     console.log("User created successfully");
     return res.status(201).json({
@@ -65,52 +60,52 @@ export const Signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
-      return res.status(400).send("Please enter all the fields.");
+      return res.status(400).json({ message: "Please enter all the fields." });
     }
+
     const isExistingUser = await Admin.findOne({ email });
     if (!isExistingUser) {
-      return res.status(401).send("Admin not found.");
+      return res.status(401).json({ message: "Admin not found." });
     }
+
     const isPasswordCorrect = await bcrypt.compare(
       password,
       isExistingUser.password
     );
     if (!isPasswordCorrect) {
-      return res.status(401).send("Invalid Credentials");
+      return res.status(401).json({ message: "Invalid Credentials" });
     }
-    const token = jwt.sign({ id: isExistingUser._id }, process.env.SECRET_KEY, {
+
+    const token = jwt.sign({ id: isExistingUser._id }, "GRADJOB", {
       expiresIn: "1d",
     });
-    console.log(token);
-    res.cookie("token", {
-      expires: new Date(Date.now() + 8 * 3600000),
-      secure: false, // HTTPS par true karna
-      sameSite: "None", // localhost par None rakhna
+
+    // ✅ Set cookie properly
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // change to true in production with HTTPS
+      sameSite: "lax",
     });
 
+    // ✅ Return token in response (optional)
     return res.status(200).json({
       message: "Login successful",
-      Admin: {
-        id: isExistingUser._id,
-        name: isExistingUser.name,
-        email: isExistingUser.email,
-      },
+      admin: isExistingUser,
+      token, // optional: helps with debugging in Postman
     });
   } catch (error) {
     console.log("ERROR", error);
-    return res.status(500).send("ERROR", error);
+    return res.status(500).json({ message: "Server error", error });
   }
 };
+
 //logout API
 export const logout = async (req, res) => {
   try {
     // Clear the cookie by setting empty value and immediate expiry
-    res.cookie("token", token, {
-      secure: false, // localhost => false, https => true
-      sameSite: "None", // cross-origin cookie allow
-      path: "/",
-    });
+    res.cookie("token", "");
 
     return res.status(200).json({ message: "Logout successful" });
   } catch (error) {

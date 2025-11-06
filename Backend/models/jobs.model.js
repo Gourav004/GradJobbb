@@ -1,67 +1,51 @@
-// models/Job.js
 import mongoose from "mongoose";
 
 const jobSchema = new mongoose.Schema({
-  title: {
+  title: String,
+  company: String,
+  description: String,
+  location: String,
+  package: Number,
+  salaryType: {
     type: String,
-    required: true,
-    trim: true,
+    enum: ["LPA", "Monthly", "Stipend"],
+    default: "LPA",
   },
-  company: {
+  duration: String,
+  minCGPA: Number,
+  branch: [String],
+  skillsRequired: [String],
+  type: {
     type: String,
-    required: true,
-    trim: true,
+    enum: ["Internship", "Full-time", "Part-time", "Remote", "Contract"],
+    default: "Full-time",
   },
-  description: {
+  mode: {
     type: String,
-    required: true,
-    trim: true,
+    enum: ["Onsite", "Remote", "Hybrid"],
+    default: "Onsite",
   },
-  location: {
+  experienceLevel: {
     type: String,
-    default: "Remote",
-    trim: true,
+    enum: ["Fresher", "0-1 years", "1-3 years", "3+ years"],
+    default: "Fresher",
   },
-  package: {
-    type: Number, // in LPA
-    required: true,
+  lastDateToApply: Date,
+  postedAt: { type: Date, default: Date.now },
+  status: {
+    type: String,
+    enum: ["active", "closed", "draft"],
+    default: "active",
   },
-  minCGPA: {
-    type: Number,
-    default: 0, // optional, zero means no minimum
-  },
-  branch: {
-    type: [String], // allowed branches
-    default: ["CS", "IT", "ECE", "EE", "ME"], // default common branches
-  },
-  lastDateToApply: {
-    type: Date,
-    required: true,
-  },
-  collegeID: {
-    type: Number,
-    length: 6,
-  },
+  collegeID: { type: Number, ref: "Admin" },
+  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
   applicants: [
     {
-      student: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
-      status: {
-        type: String,
-        enum: ["applied", "shortlisted", "rejected", "selected"],
-        default: "applied",
-      },
+      studentId: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
+      status: { type: String, default: "applied" },
       appliedAt: { type: Date, default: Date.now },
     },
   ],
-  postedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Admin",
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
 const Job = mongoose.model("Job", jobSchema);

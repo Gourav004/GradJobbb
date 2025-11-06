@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import JobCardSkeleton from "./JobsShimmer.jsx";
+import { useNavigate } from "react-router-dom";
 
 function ViewJobs() {
   const dispatch = useDispatch();
   const jobs = useSelector((store) => store.jobs);
+  const navigate = useNavigate();
 
   const handleViewJobs = async () => {
     try {
@@ -41,32 +43,37 @@ function ViewJobs() {
     <div className="text-white bg-gray-950 min-h-screen p-8 font-sans">
       {/* Top Search Bar - SVG ke saath */}
 
-      <a
-        href="/dashboard"
-        className="inline-block mb-6 hover:scale-105 cursor-pointer transition-all duration-300 "
-      >
-        <button className="text-white px-4 font-semibold py-2 rounded-lg bg-white/15 backdrop-blur-md border border-white/30 shadow-md transition-all duration-300 hover:bg-white/25 active:scale-95 flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            stroke="currentColor"
-            className="h-5 w-5 mr-2" // Thoda sa bada icon
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-          <span className="text-[14px]">Back</span> {/* Thoda sa bada text */}
-        </button>
-      </a>
-
-      <h1 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-600">
-        {"Available Job Openings"}
-      </h1>
+      {/* --- MODIFIED SECTION START --- */}
+      <div className="flex items-center mb-8">
+        <span>
+          <a href="/dashboard" className="inline-block cursor-pointer group">
+            {" "}
+            <button className=" flex items-center gap-2 bg-[#0d0d0d] border border-cyan-500/40 px-7 py-3 rounded-full font-semibold text-cyan-300 transition-all duration-300 ease-out shadow-[0_0_10px_rgba(0,255,255,0.15)] hover:shadow-[0_0_20px_rgba(0,255,255,0.35)] hover:border-cyan-400 hover:scale-105 active:scale-95 ">
+              {" "}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1"
+              >
+                {" "}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                />{" "}
+              </svg>{" "}
+              <span className="text-[15px]">Back</span>{" "}
+            </button>{" "}
+          </a>
+        </span>
+        <h1 className="text-4xl pb-2 font-bold ml-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-300">
+          {"Available Job Openings"}
+        </h1>
+      </div>
+      {/* --- MODIFIED SECTION END --- */}
 
       <div className="space-y-6">
         {jobs.allJobs.map((job, index) => (
@@ -92,7 +99,32 @@ function ViewJobs() {
                 </div>
               </div>
 
-              <p className="text-lg font-semibold text-gray-300 mb-3">
+              <p className="text-lg flex align-center flex-row gap-2 font-semibold text-gray-300 mb-3">
+                <svg
+                  className="relative top-1 text-cyan-300 drop-shadow-[0_0_6px_#22d3ee]"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-building-icon lucide-building"
+                >
+                  <path d="M12 10h.01" />
+                  <path d="M12 14h.01" />
+                  <path d="M12 6h.01" />
+                  <path d="M16 10h.01" />
+                  <path d="M16 14h.01" />
+                  <path d="M16 6h.01" />
+                  <path d="M8 10h.01" />
+                  <path d="M8 14h.01" />
+                  <path d="M8 6h.01" />
+                  <path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
+                  <rect x="4" y="2" width="16" height="20" rx="2" />
+                </svg>
                 {job.company}
               </p>
               <p className="text-gray-400 mb-4 line-clamp-3">
@@ -117,7 +149,7 @@ function ViewJobs() {
                       d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
                     />
                   </svg>
-                  Internship {/* Dummy data */}
+                  Internship
                 </span>
 
                 {/* Location Tag with MapPin SVG */}
@@ -161,21 +193,26 @@ function ViewJobs() {
             {/* Right Section - Salary, Deadline, Button */}
             <div className="md:w-1/4 flex flex-col justify-between items-end md:items-start pt-4 md:pt-0 md:pl-6">
               <div className="text-right md:text-left mb-6 md:mb-0">
-                <p className="text-3xl font-bold text-green-400 mb-1 flex items-center">
+                <p className="text-3xl font-bold text-blue-400 mb-1 gap-3 flex items-center">
                   {/* Salary SVG */}
                   <svg
-                    className="text-green-500 mr-2 w-7 h-7"
+                    className="text-blue-400 drop-shadow-[0_0_6px_#22d3ee]"
                     xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
+                    width="24"
+                    height="24"
                     viewBox="0 0 24 24"
-                    strokeWidth="2"
+                    fill="none"
                     stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-hand-coins-icon lucide-hand-coins"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.768 0-1.536.219-2.121.659-.955.715-.955 1.89 0 2.606l.879.659z"
-                    />
+                    <path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" />
+                    <path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" />
+                    <path d="m2 16 6 6" />
+                    <circle cx="16" cy="9" r="2.9" />
+                    <circle cx="6" cy="5" r="3" />
                   </svg>
                   {job.package ? `₹${job.package} LPA` : "Competitive"}
                 </p>
@@ -190,9 +227,10 @@ function ViewJobs() {
                   </span>
                 </p>
               </div>
-              <motion.button
+              <motion.a
+                href={`/viewAJob/${job._id}`}
                 className="bg-cyan-600 text-white font-bold py-3 px-8 rounded-lg transition-all
-                                 hover:bg-cyan-500 transform hover:scale-105 shadow-md hover:shadow-lg"
+                                   hover:bg-cyan-500 transform hover:scale-105 shadow-md hover:shadow-lg"
                 whileHover={{
                   scale: 1.05,
                   boxShadow: "0 8px 25px -5px rgba(22, 163, 164, 0.4)", // Cyan shadow
@@ -200,7 +238,7 @@ function ViewJobs() {
                 whileTap={{ scale: 0.95 }}
               >
                 View Details
-              </motion.button>
+              </motion.a>
             </div>
           </motion.div>
         ))}

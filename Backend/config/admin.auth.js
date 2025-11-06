@@ -1,29 +1,33 @@
 import jwt from "jsonwebtoken";
 import Admin from "../models/admin.model.js";
 
-export const adminAuth = async (req, res, next) => {
+const adminAuth = async (req, res, next) => {
   try {
-    // read the token safely
-    const token = req.cookies?.token; // <- correct
+    // ✅ Token should come from cookies
+    const token = req.cookies.token;
+    console.log("Token of Admin Auth ", token);
+
     if (!token) {
-      return res.status(401).send("Unauthorized: No token provided");
+      return res.status(401).json({ message: "No token provided" });
     }
 
-    // validate the token
-    const decodedObj = jwt.verify(token, "GRADJOB");
-    console.log(decodedObj);
+    // ✅ Verify token string
+    const decoded = jwt.verify(token, "GRADJOB");
 
-    // find the user
-    const admin = await Admin.findById(decodedObj.id); // decoded id
-    console.log(admin);
+    // ✅ Fetch admin details
+    const admin = await Admin.findById(decoded.id);
     if (!admin) {
-      return res.status(401).send("User not found");
+      return res.status(401).json({ message: "Admin not found" });
     }
-    // attach admin to request
-    req.user = admin;
-    console.log(req.user);
+
+    req.user = admin; // make available in next routes
     next();
-  } catch (err) {
-    return res.status(401).send("ERROR: " + err.message);
+  } catch (error) {
+    console.error("JWT ERROR:", error);
+    return res
+      .status(401)
+      .json({ message: "Invalid or expired token", error: error.message });
   }
 };
+
+export default adminAuth;

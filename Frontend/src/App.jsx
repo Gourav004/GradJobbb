@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import StudentProfileView from "./Components/StudentProfileView.jsx";
 import ViewJobs from "./Components/ViewJobs.jsx";
 import EditProfile from "./Components/EditProfile.jsx";
+import ViewJob from "./Components/ViewJob.jsx";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/studentProfile" element={<StudentProfileView />} />
           <Route path="/jobs" element={<ViewJobs />} />
           <Route path="/editProfile" element={<EditProfile />} />
+          <Route path="/viewAJob/:id" element={<ViewJob />} />
         </Routes>
       </BrowserRouter>
     </Provider>

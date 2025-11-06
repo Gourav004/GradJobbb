@@ -21,12 +21,6 @@ app.use(
 );
 app.use(cookieParser()); // read cookies first
 
-// ✅ Step 3: Global request logger (optional)
-app.use((req, res, next) => {
-  console.log("➡️ Incoming request:", req.method, req.url);
-  next();
-});
-
 // ✅ Step 4: Routes
 app.use("/user", AuthRoute);
 app.use("/admin", AdminAuth);

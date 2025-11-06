@@ -169,7 +169,7 @@ export default function App() {
       ),
     },
     {
-      href: "/apply",
+      href: "/appliedJobs",
       text: "Applied Jobs",
       icon: (
         <svg
