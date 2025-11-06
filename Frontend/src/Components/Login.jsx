@@ -109,7 +109,7 @@ const LoginSignup = () => {
     name: "",
     collegeID: "",
     email: "test@mail.com",
-    password: "Test@123", 
+    password: "Test@123",
   });
 
   const dispatch = useDispatch();

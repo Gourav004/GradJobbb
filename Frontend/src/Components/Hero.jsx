@@ -121,13 +121,44 @@ export default function Hero() {
 
         <div className="relative z-10">
           {/* Navbar */}
-          <nav className="flex justify-between items-center px-4 sm:px-8 py-4">
+          <nav className="flex justify-between items-center px-6 mt-5 sm:px-8 py-4 relative">
+            {/* Left - Logo */}
             <div className="text-xl sm:text-2xl font-bold">
               Grad<span className="text-cyan-400">Job</span>
             </div>
+            {/* Center - Glass Navigation Tabs */}
+            <div
+              className="
+        absolute left-1/2 -translate-x-1/2 
+        flex items-center gap-6 
+        px-6 py-2 rounded-full 
+        backdrop-blur-md bg-white/5 border border-white/10 
+        text-gray-300 text-sm shadow-[0_0_12px_rgba(255,255,255,0.1)]
+      "
+            >
+              <a
+                href="#"
+                className="text-white font-medium flex items-center gap-1 hover:scale-105  duration-150"
+              >
+                <span className="text-cyan-400 text-[10px]">●</span> Home
+              </a>
+              <a
+                href="/admin"
+                className="hover:text-white transition hover:scale-105  duration-150"
+              >
+                Admin
+              </a>
+              <a
+                href="#"
+                className="hover:text-white transition hover:scale-105  duration-150"
+              >
+                Showcase
+              </a>
+            </div>
+            {/* Right - Login Button */}hover:scale-105 duration-150
             <motion.a
               href="/login"
-              className="bg-cyan-500 text-white font-medium px-4 py-1 rounded-lg  sm:text-base transform-gpu select-none shadow-lg shadow-cyan-500/20"
+              className="bg-cyan-500 text-white font-medium px-4 py-1 rounded-lg sm:text-base shadow-lg shadow-cyan-500/20"
               whileHover={buttonHover}
               whileTap={buttonTap}
               style={{ fontWeight: 500 }}
@@ -135,7 +166,6 @@ export default function Hero() {
               Login
             </motion.a>
           </nav>
-
           {/* Hero Section */}
           <div className="flex flex-col justify-center items-center h-[80vh] text-center px-4 sm:px-8">
             <motion.div
@@ -217,7 +247,6 @@ export default function Hero() {
               </motion.a>
             </motion.div>
           </div>
-
           {/* Floating Points */}
           <FloatingPoint top left name="Students" value="20,945" delay={1} />
           <FloatingPoint top right name="Colleges" value="2,345" delay={2} />

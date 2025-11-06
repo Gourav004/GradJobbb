@@ -7,6 +7,7 @@ import { studentGetJob } from "../Middlewares/student.getJobs.js";
 import { studentApplyJobs } from "../Middlewares/student.applyJob.js";
 import { studentViewJob } from "../Middlewares/student.viewJob.js";
 import { cgpaFilter } from "../Middlewares/filter.cgpa.js";
+import { showAppliedJobs } from "../Middlewares/student.appliedJobs.js";
 
 const router = express.Router();
 
@@ -17,6 +18,7 @@ router.get("/profile", userAuth, studentViewProfile);
 router.patch("/profile/edit", userAuth, studentEditProfile);
 router.get("/viewjobs", userAuth, studentGetJob);
 router.post("/apply/:jobId", userAuth, studentApplyJobs);
+router.get("/appliedJobs", userAuth, showAppliedJobs);
 router.get("/viewAJob/:id", userAuth, studentViewJob);
 router.get("/filterJob/:cgpa", userAuth, cgpaFilter);
 
