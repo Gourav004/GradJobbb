@@ -129,28 +129,39 @@ export default function Hero() {
             {/* Center - Glass Navigation Tabs */}
             <div
               className="
-        absolute left-1/2 -translate-x-1/2 
-        flex items-center gap-6 
-        px-6 py-2 rounded-full 
-        backdrop-blur-md bg-white/5 border border-white/10 
-        text-gray-300 text-sm shadow-[0_0_12px_rgba(255,255,255,0.1)]
-      "
+    absolute left-1/2 -translate-x-1/2 
+    flex items-center gap-6  cursor-pointer
+    px-6 py-2 rounded-full 
+    backdrop-blur-md bg-white/5 border border-white/10 
+    text-gray-300 text-sm shadow-[0_0_12px_rgba(255,255,255,0.1)]
+  "
             >
               <a
-                href="#"
-                className="text-white font-medium flex items-center gap-1 hover:scale-105  duration-150"
+                className="
+      text-white font-medium flex items-center gap-1 
+      transition-all duration-500 ease-in-out
+      hover:scale-110 hover:text-cyan-300
+    "
               >
                 <span className="text-cyan-400 text-[10px]">●</span> Home
               </a>
+
               <a
                 href="/admin"
-                className="hover:text-white transition hover:scale-105  duration-150"
+                className="
+      transition-all duration-500 ease-in-out 
+      hover:scale-110 hover:text-white
+    "
               >
                 Admin
               </a>
+
               <a
                 href="#"
-                className="hover:text-white transition hover:scale-105  duration-150"
+                className="
+      transition-all duration-500 ease-in-out 
+      hover:scale-110 hover:text-white
+    "
               >
                 Showcase
               </a>

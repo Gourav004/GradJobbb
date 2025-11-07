@@ -7,6 +7,7 @@ import { viewAJob } from "../Middlewares/admin.viewAJob.js";
 import { editAJob } from "../Middlewares/admin.editAJob.js";
 import { deleteJob } from "../Middlewares/admin.deleteJob.js";
 import { getStudentsList } from "../Middlewares/admin.getStudents.js";
+import { adminViewProfile } from "../Middlewares/adminViewProfile.js";
 
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.get("/jobs/:id", adminAuth, viewAJob);
 router.patch("/jobs/edit/:id", adminAuth, editAJob);
 router.delete("/jobs/delete/:id", adminAuth, deleteJob);
 router.get("/students", adminAuth, getStudentsList);
+router.get("/profile", adminAuth, adminViewProfile);
 
 export default router;

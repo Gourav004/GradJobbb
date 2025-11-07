@@ -102,14 +102,14 @@ const AuthInput = ({
   </div>
 );
 
-const LoginSignup = () => {
+const AdminLogin = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [ShowPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     collegeID: "",
-    email: "test@mail.com",
-    password: "Test@123",
+    email: "Admin1@mail.com",
+    password: "Admin1@123",
   });
 
   const dispatch = useDispatch();
@@ -131,8 +131,8 @@ const LoginSignup = () => {
 
     try {
       const url = isSignUp
-        ? "http://localhost:5000/user/signup"
-        : "http://localhost:5000/user/login";
+        ? "http://localhost:5000/admin/signup"
+        : "http://localhost:5000/admin/login";
 
       // ✅ Payload alag kar diya (Signup vs Login)
       const payload = isSignUp
@@ -173,7 +173,7 @@ const LoginSignup = () => {
       });
 
       // ✅ Redirect
-      navigate("/dashboard");
+      navigate("/admin/dashboard");
     } catch (err) {
       console.error("Error:", err);
       toast.error(err.response?.data?.message || "Invalid Credentials");
@@ -182,9 +182,10 @@ const LoginSignup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-900 via-black to-cyan-900 p-2 font-['Inter',sans-serif]">
-      <a href="/" className="inline-block mb-6 cursor-pointer group">
+      <a href="/" className=" mb-6 cursor-pointer group">
         <button
           className="
+          absolute top-2.5 left-5
       flex items-center gap-2
       bg-[#0d0d0d] border border-cyan-500/40
       px-6 py-2 rounded-full font-semibold text-cyan-300
@@ -214,6 +215,7 @@ const LoginSignup = () => {
           <span className="text-[15px]">Back</span>
         </button>
       </a>
+
       <FrostedCard>
         <AnimatePresence mode="wait">
           <motion.div
@@ -317,4 +319,4 @@ const LoginSignup = () => {
   );
 };
 
-export default LoginSignup;
+export default AdminLogin;
