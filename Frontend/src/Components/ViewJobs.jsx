@@ -1,26 +1,26 @@
-import { showJobs } from "../Store/JobsSlice";
 import axios from "axios";
 import { motion } from "framer-motion";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import JobCardSkeleton from "./JobsShimmer.jsx";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function ViewJobs() {
-  const dispatch = useDispatch();
-  const jobs = useSelector((store) => store.jobs);
+  // --- LOCAL STATE INSTEAD OF REDUX ---
+  const [allJobs, setAllJobs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const handleViewJobs = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.get("http://localhost:5000/user/viewjobs", {
         withCredentials: true,
       });
-
-      console.log("✅ Jobs data:", res.data);
-      dispatch(showJobs(res.data));
+      // Assuming API returns { allJobs: [...] } based on previous Redux usage
+      setAllJobs(res.data.allJobs || []);
     } catch (error) {
       console.log("❌ Error:", error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -28,222 +28,280 @@ function ViewJobs() {
     handleViewJobs();
   }, []);
 
-  // 🧩 Agar jobs ya jobs.allJobs exist nahi hai to error se bacho
-  if (!jobs || !jobs.allJobs) {
+  // --- SORTING LOGIC ---
+  const sortedJobs = useMemo(() => {
+    if (!allJobs) return [];
+
+    return [...allJobs].sort((a, b) => {
+      const dateA = new Date(a.postedAt || a.createdAt || 0);
+      const dateB = new Date(b.postedAt || b.createdAt || 0);
+      return dateB - dateA;
+    });
+  }, [allJobs]);
+
+  const isNewJob = (dateString) => {
+    if (!dateString) return false;
+    const postedDate = new Date(dateString);
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    return postedDate > threeDaysAgo;
+  };
+
+  // 🧩 Loading State
+  if (isLoading) {
     return (
-      <div className="text-white bg-gray-900 min-h-screen flex justify-center items-center">
-        <h1 className="text-3xl font-bold">
-          <JobCardSkeleton />
-        </h1>
+      <div className="text-white bg-gray-950 min-h-screen flex justify-center items-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin"></div>
+          <p className="text-cyan-400 animate-pulse">
+            Loading opportunities...
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="text-white bg-gray-950 min-h-screen p-8 font-sans">
-      {/* Top Search Bar - SVG ke saath */}
-
-      {/* --- MODIFIED SECTION START --- */}
-      <div className="flex items-center mb-8">
-        <span>
-          <a href="/dashboard" className="inline-block cursor-pointer group">
-            {" "}
-            <button className=" flex items-center gap-2 bg-[#0d0d0d] border border-cyan-500/40 px-7 py-3 rounded-full font-semibold text-cyan-300 transition-all duration-300 ease-out shadow-[0_0_10px_rgba(0,255,255,0.15)] hover:shadow-[0_0_20px_rgba(0,255,255,0.35)] hover:border-cyan-400 hover:scale-105 active:scale-95 ">
-              {" "}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1"
-              >
-                {" "}
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-                />{" "}
-              </svg>{" "}
-              <span className="text-[15px]">Back</span>{" "}
-            </button>{" "}
-          </a>
-        </span>
-        <h1 className="text-4xl pb-2 font-bold ml-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-300">
-          {"Available Job Openings"}
+    <div className="text-white bg-gray-950 min-h-screen p-6 md:p-8 font-sans">
+      {/* --- Top Navigation --- */}
+      <div className="max-w-7xl mx-auto flex items-center mb-10">
+        <a href="/dashboard" className="inline-block cursor-pointer group mr-6">
+          <button className="flex items-center gap-2 bg-[#0d0d0d] border border-cyan-500/30 px-5 py-2.5 rounded-full font-semibold text-cyan-300 transition-all duration-300 ease-out shadow-[0_0_15px_rgba(0,255,255,0.1)] hover:shadow-[0_0_20px_rgba(0,255,255,0.25)] hover:border-cyan-400 hover:-translate-x-1 active:scale-95">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="2.5"
+              stroke="currentColor"
+              className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              />
+            </svg>
+            <span className="text-sm">Back</span>
+          </button>
+        </a>
+        <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">
+          Available Opportunities
         </h1>
       </div>
-      {/* --- MODIFIED SECTION END --- */}
 
-      <div className="space-y-6">
-        {jobs.allJobs.map((job, index) => (
-          <motion.div
-            key={job._id}
-            className="flex flex-col md:flex-row bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-700/50
-                       hover:border-cyan-500/50 hover:shadow-cyan-500/10 transition-all duration-300 group"
-            layout
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            whileHover={{ y: -5, scale: 1.01 }}
-          >
-            {/* Left Section - Job Info */}
-            <div className="flex-grow md:w-3/4 pr-4 border-b md:border-b-0 md:border-r border-gray-700/50 pb-4 md:pb-0 md:pr-6">
-              <div className="flex justify-between items-start mb-2">
-                <h2 className="text-2xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">
-                  {job.title}
-                </h2>
-                <div className="bg-orange-500 text-white text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
-                  {Math.floor(Math.random() * 30) + 70}% match{" "}
-                  {/* Dummy match */}
-                </div>
-              </div>
-
-              <p className="text-lg flex align-center flex-row gap-2 font-semibold text-gray-300 mb-3">
-                <svg
-                  className="relative top-1 text-cyan-300 drop-shadow-[0_0_6px_#22d3ee]"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-building-icon lucide-building"
-                >
-                  <path d="M12 10h.01" />
-                  <path d="M12 14h.01" />
-                  <path d="M12 6h.01" />
-                  <path d="M16 10h.01" />
-                  <path d="M16 14h.01" />
-                  <path d="M16 6h.01" />
-                  <path d="M8 10h.01" />
-                  <path d="M8 14h.01" />
-                  <path d="M8 6h.01" />
-                  <path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
-                  <rect x="4" y="2" width="16" height="20" rx="2" />
-                </svg>
-                {job.company}
-              </p>
-              <p className="text-gray-400 mb-4 line-clamp-3">
-                {job.description}
-              </p>
-
-              {/* Tags/Badges with SVGs */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {/* Job Type Tag with Calendar SVG */}
-                <span className="bg-blue-600/30 text-blue-300 text-xs font-medium px-3 py-1 rounded-full flex items-center">
-                  <svg
-                    className="mr-1.5 w-4 h-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
-                    />
-                  </svg>
-                  {job.type}
-                </span>
-
-                {/* Location Tag with MapPin SVG */}
-                <span className="bg-green-600/30 text-green-300 text-xs font-medium px-3 py-1 rounded-full flex items-center">
-                  <svg
-                    className="mr-1.5 w-4 h-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-                    />
-                  </svg>
-                  {job.location}
-                </span>
-
-                {job.skillsRequired
-                  ?.slice(0, Math.floor(Math.random() * 3) + 2)
-                  .map((skill, i) => (
-                    <span
-                      key={i}
-                      className="bg-gray-700 text-gray-300 text-xs font-medium px-3 py-1 rounded-full"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-              </div>
-            </div>
-
-            {/* Right Section - Salary, Deadline, Button */}
-            <div className="md:w-1/4 flex flex-col justify-between items-end md:items-start pt-4 md:pt-0 md:pl-6">
-              <div className="text-right md:text-left mb-6 md:mb-0">
-                <p className="text-3xl font-bold text-blue-400 mb-1 gap-3 flex items-center">
-                  {/* Salary SVG */}
-                  <svg
-                    className="text-blue-400 drop-shadow-[0_0_6px_#22d3ee]"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.75"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-hand-coins-icon lucide-hand-coins"
-                  >
-                    <path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" />
-                    <path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" />
-                    <path d="m2 16 6 6" />
-                    <circle cx="16" cy="9" r="2.9" />
-                    <circle cx="6" cy="5" r="3" />
-                  </svg>
-                  {job.package ? `₹${job.package} LPA` : "Competitive"}
-                </p>
-                <p className="text-gray-400 text-sm">
-                  Deadline:{" "}
-                  <span className="font-semibold text-red-400">
-                    {new Date(job.lastDateToApply).toLocaleDateString("en-IN", {
-                      day: "2-digit",
-                      month: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
-                </p>
-              </div>
-              <motion.a
-                href={`/viewAJob/${job._id}`}
-                className="bg-cyan-600 text-white font-bold py-3 px-8 rounded-lg transition-all
-                                   hover:bg-cyan-500 transform hover:scale-105 shadow-md hover:shadow-lg"
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 8px 25px -5px rgba(22, 163, 164, 0.4)", // Cyan shadow
+      {/* --- JOB LIST --- */}
+      <div className="max-w-7xl mx-auto space-y-6">
+        {sortedJobs.length > 0 ? (
+          sortedJobs.map((job, index) => {
+            const isNew = isNewJob(job.postedAt || job.createdAt);
+            return (
+              <motion.div
+                key={job._id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: index * 0.05,
+                  ease: "easeOut",
                 }}
-                whileTap={{ scale: 0.95 }}
+                className="flex flex-col md:flex-row bg-gray-900/50 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/5
+                            hover:border-cyan-500/30 hover:bg-gray-900/80 transition-all duration-300 group relative overflow-hidden"
               >
-                View Details
-              </motion.a>
-            </div>
-          </motion.div>
-        ))}
+                {/* New Badge if applicable */}
+                {isNew && (
+                  <div className="absolute top-0 right-0">
+                    <span className="bg-cyan-500 text-black text-[10px] font-extrabold px-3 py-1 rounded-bl-lg shadow-sm shadow-cyan-500/20 flex items-center gap-1">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-black/80"></span>
+                      </span>
+                      NEW
+                    </span>
+                  </div>
+                )}
+
+                {/* Left Section - Job Info */}
+                <div className="flex-grow md:w-3/4 pr-4 border-b md:border-b-0 md:border-r border-white/10 pb-5 md:pb-0 md:pr-8">
+                  <div className="flex flex-wrap justify-between items-start mb-3 gap-2">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                        {job.title}
+                      </h2>
+                    </div>
+
+                    {/* Match Badge (Optional) */}
+                    <div className="bg-gradient-to-r from-green-500/10 to-green-500/10 border border-green-500/20 text-green-300 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+                      {Math.floor(Math.random() * 20) + 80}% Match
+                    </div>
+                  </div>
+
+                  <p className="text-base flex items-center gap-2 font-medium text-gray-300 mb-4">
+                    <Building2Icon className="w-4 h-4 text-cyan-400" />
+                    {job.company}
+                  </p>
+
+                  <p className="text-gray-400 text-sm leading-relaxed mb-5 line-clamp-2 md:line-clamp-3">
+                    {job.description}
+                  </p>
+
+                  {/* Tags/Badges */}
+                  <div className="flex flex-wrap gap-2.5">
+                    {/* Job Type */}
+                    <span className="bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                      <BriefcaseIcon className="w-3.5 h-3.5" />
+                      {job.type}
+                    </span>
+
+                    {/* Location */}
+                    <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                      <MapPinIcon className="w-3.5 h-3.5" />
+                      {job.location}
+                    </span>
+
+                    {/* Skills - Limit to 3 for neatness */}
+                    {job.skillsRequired?.slice(0, 3).map((skill, i) => (
+                      <span
+                        key={i}
+                        className="bg-gray-800 border border-white/5 text-gray-300 text-xs font-medium px-3 py-1.5 rounded-lg"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                    {job.skillsRequired?.length > 3 && (
+                      <span className="text-xs text-gray-500 self-center px-1">
+                        +{job.skillsRequired.length - 3} more
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right Section - Salary, Deadline, Button */}
+                <div className="md:w-1/4 flex flex-col justify-between items-start md:items-end pt-5 md:pt-1 md:pl-8">
+                  <div className="text-left md:text-right mb-6 md:mb-0 w-full">
+                    <p className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center md:justify-end gap-2">
+                      <span className="text-cyan-400">₹</span>
+                      {job.package ? `${job.package} LPA` : "Best in Industry"}
+                    </p>
+                    <p className="text-gray-500 text-xs flex items-center md:justify-end gap-1.5">
+                      <ClockIcon className="w-3.5 h-3.5" />
+                      Apply by:{" "}
+                      <span className="text-gray-300 font-medium">
+                        {new Date(job.lastDateToApply).toLocaleDateString(
+                          "en-IN",
+                          {
+                            day: "2-digit",
+                            month: "short",
+                          }
+                        )}
+                      </span>
+                    </p>
+                  </div>
+
+                  <motion.button
+                    onClick={() => navigate(`/viewAJob/${job._id}`)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full md:w-auto bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 px-6 rounded-xl 
+                                   shadow-lg shadow-cyan-500/20 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    View Details
+                    <ArrowRightIcon className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+            );
+          })
+        ) : (
+          <div className="text-center py-20 text-gray-500">
+            No job openings available at the moment.
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
+// --- Simple Internal Icons to avoid extra imports if not available ---
+const Building2Icon = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
+    <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+    <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
+    <path d="M10 6h4" />
+    <path d="M10 10h4" />
+    <path d="M10 14h4" />
+    <path d="M10 18h4" />
+  </svg>
+);
+const BriefcaseIcon = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+    <rect width="20" height="14" x="2" y="6" rx="2" />
+  </svg>
+);
+const MapPinIcon = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+);
+const ClockIcon = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+const ArrowRightIcon = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
+  </svg>
+);
 
 export default ViewJobs;

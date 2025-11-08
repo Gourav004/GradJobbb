@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import JobDetailSkeleton from "./JobCardShimmer.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 
-function ViewJob() {
+function AdminViewJob() {
   const { id } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,16 +24,13 @@ function ViewJob() {
 
       const timeout = setTimeout(() => setLoading(false), 2500); // fallback
 
-      const res = await axios.get(
-        `http://localhost:5000/user/viewAJob/${jobID}`,
-        {
-          withCredentials: true,
-          signal: controllerRef.current.signal,
-        }
-      );
+      const res = await axios.get(`http://localhost:5000/admin/jobs/${jobID}`, {
+        withCredentials: true,
+        signal: controllerRef.current.signal,
+      });
 
       clearTimeout(timeout);
-      setJob(res.data?.job);
+      setJob(res.data);
     } catch (error) {
       if (axios.isCancel(error)) console.log("Fetch cancelled");
       else console.error("Fetch job error:", error.message);
@@ -42,39 +39,17 @@ function ViewJob() {
     }
   };
 
-  // ✅ Optimistic Apply (instant animation)
-  const handleClick = async (jobID) => {
-    if (isApplied) return;
-
-    // Instant feedback (optimistic)
-    setIsApplied(true);
-    setShowSparkles(true);
-    toast.loading("Applying...", { id: "apply-toast" });
-
+  const handleDelete = async (JobID) => {
     try {
-      const res = await axios.post(
-        `http://localhost:5000/user/apply/${jobID}`,
-        {},
-        { withCredentials: true, timeout: 6000 }
+      const res = await axios.delete(
+        `http://localhost:5000/admin/jobs/delete/${JobID}`,
+        { withCredentials: true }
       );
-
-      toast.success("Applied Successfully!", { id: "apply-toast" });
-      navigate("/jobs");
+      toast.success("Job Deleted Successfully");
+      navigate("/admin/jobs");
     } catch (error) {
-      // revert state if failed
-      setIsApplied(false);
-      if (
-        error.response?.data?.message ===
-        "You have already applied to this job."
-      ) {
-        toast.success("Already Applied for this job", { id: "apply-toast" });
-        navigate("/jobs");
-      } else {
-        toast.error("Something went wrong", { id: "apply-toast" });
-      }
-      console.error("Apply error:", error.message);
-    } finally {
-      setTimeout(() => setShowSparkles(false), 2000);
+      console.log("ERROR in delete", error.message);
+      toast.error("Something went wrong");
     }
   };
 
@@ -196,50 +171,62 @@ function ViewJob() {
 
           {/* Buttons */}
           <div className="mt-16 flex flex-col items-center space-y-6">
-            <motion.button
-              onClick={() => handleClick(job._id)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`relative w-full sm:w-[80%] font-bold text-lg py-3 px-8 rounded-lg transition-all duration-300 overflow-hidden ${
-                isApplied
-                  ? "bg-green-500 text-black"
-                  : "bg-cyan-500 hover:bg-cyan-400 text-black"
-              }`}
-            >
-              <AnimatePresence mode="wait">
-                {!isApplied ? (
-                  <motion.span
-                    key="apply-text"
-                    initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                    className="relative z-10"
-                  >
-                    Apply Now
-                  </motion.span>
-                ) : (
-                  <motion.div
-                    key="tick"
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: [0, 1.2, 1], opacity: 1 }}
-                    transition={{ duration: 0.6 }}
-                    className="relative z-10 flex justify-center items-center"
-                  >
-                    <CheckCircle2 className="w-7 h-7 text-black" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
-
-            {/* Sparkles Animation */}
-            {showSparkles && <Sparkles />}
-
             <button
-              onClick={() => navigate("/jobs")}
-              className="w-full sm:w-[80%] bg-[#0d0d0d] border border-cyan-500/40 py-3 rounded-lg font-semibold text-cyan-300 hover:shadow-[0_0_20px_rgba(0,255,255,0.35)] transition-all duration-300"
+              onClick={() => handleDelete(job._id)}
+              className="w-full sm:w-[80%] flex items-center justify-center gap-2 
+             bg-gradient-to-r from-red-600 to-red-700  cursor-pointer
+             border border-red-500/40 py-3 rounded-lg font-semibold text-white 
+             transition-all duration-300 ease-out hover:scale-105
+             hover:from-red-600 hover:to-red-800 hover:border-red-400 
+             hover:shadow-[0_0_20px_rgba(255,10,0,0.3)] 
+             active:scale-95"
             >
-              Back to Jobs
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform duration-200 group-hover:rotate-6"
+              >
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                <path d="M3 6h18" />
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+              Delete Job
             </button>
+            <a
+              href="/admin/jobs"
+              className="cursor-pointer group w-full sm:w-[80%]"
+            >
+              <button
+                className="
+      flex items-center justify-center gap-2 w-full bg-[#0d0d0d] border border-cyan-500/40 py-3 rounded-lg font-semibold text-cyan-300 transition-all duration-300 ease-out shadow-[0_0_10px_rgba(0,255,255,0.15)]
+      hover:shadow-[0_0_20px_rgba(0,255,255,0.35)] hover:border-cyan-400 hover:scale-105 active:scale-95 "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                  />
+                </svg>
+                <span className="text-[15px]">View Jobs</span>
+              </button>
+            </a>
 
             <p className="text-center text-gray-400 text-sm mt-2">
               Last Date to Apply: {formatDate(job.lastDateToApply)}
@@ -279,4 +266,4 @@ const Sparkles = () => (
   </div>
 );
 
-export default ViewJob;
+export default AdminViewJob;

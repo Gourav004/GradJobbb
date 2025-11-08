@@ -70,6 +70,7 @@ export default function App() {
       console.log("Logged out successfully");
       dispatch(removeUser());
       navigate("/login");
+      window.location.reload();
     } catch (err) {
       console.error("Logout error:", err);
     }
@@ -294,21 +295,28 @@ export default function App() {
                     {/* Menu Items */}
                     <a
                       href={"/studentProfile"}
-                      className="flex justify-between items-center w-full px-3 py-2 text-sm text-white/90 
+                      className="flex justify-between  items-center w-full px-3 py-2 text-sm text-white/90 
                             rounded-md cursor-pointer transition-all duration-200 hover:bg-cyan-400/15 hover:translate-x-0.5"
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.25"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-user-icon lucide-user -mr-16 "
+                      >
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>{" "}
                       Profile
                       <span className="bg-cyan-500/20 text-cyan-300 text-xs font-medium px-2 py-0.5 rounded-full">
                         New
                       </span>
-                    </a>
-
-                    <a
-                      href="#"
-                      className="block w-full text-left px-3 py-2 text-sm text-white/80 
-                            hover:text-white rounded-md cursor-pointer transition-all duration-200 hover:bg-cyan-400/15 hover:translate-x-0.5"
-                    >
-                      Settings
                     </a>
 
                     <div className="h-px bg-white/10 my-1"></div>
@@ -316,10 +324,29 @@ export default function App() {
                     {/* Logout Button */}
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left px-3 py-2 text-sm text-red-400 
-                            rounded-md transition-all duration-200 cursor-pointer hover:bg-red-500/15 hover:text-red-300 hover:translate-x-0.5"
+                      className="flex items-center justify-start gap-2 w-full 
+             px-3 py-2 text-sm font-medium text-red-400 
+             rounded-md transition-all duration-200 
+             hover:bg-red-500/10 hover:text-red-300 
+             hover:translate-x-1 active:scale-95"
                     >
-                      Logout
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="transition-transform duration-200 group-hover:translate-x-0.5"
+                      >
+                        <path d="m16 17 5-5-5-5" />
+                        <path d="M21 12H9" />
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      </svg>
+                      <span>Logout</span>
                     </button>
                   </div>
                 </div>

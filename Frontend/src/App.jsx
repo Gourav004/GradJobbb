@@ -15,6 +15,9 @@ import AppliedJobs from "./Components/AppliedJobs.jsx";
 import AdminLogin from "./Components/AdminLogin.jsx";
 import AdminDashboard from "./Components/adminDashBoard.jsx";
 import AdminViewProfile from "./Components/AdminViewProfile.jsx";
+import AdminViewJobs from "./Components/adminViewJobs.jsx";
+import AdminViewJob from "./Components/AdminViewAJob.jsx";
+import AdminPostJob from "./Components/AdminPostJob.jsx";
 
 function App() {
   return (
@@ -34,8 +37,11 @@ function App() {
           <Route path="/viewAJob/:id" element={<ViewJob />} />
           <Route path="/appliedJobs" element={<AppliedJobs />} />
           <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/students" element={<AdminDashboard />} />
           <Route path="/admin/profile" element={<AdminViewProfile />} />
+          <Route path="/admin/jobs" element={<AdminViewJobs />} />
+          <Route path="/admin/viewJob/:id" element={<AdminViewJob />} />
+          <Route path="/admin/postJob" element={<AdminPostJob />} />
         </Routes>
       </BrowserRouter>
     </Provider>

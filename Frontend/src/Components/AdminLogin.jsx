@@ -4,7 +4,7 @@ import { User, Mail, Lock, Key } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addUser } from "@/Store/userSlice";
 
 const containerVariants = {
@@ -22,9 +22,11 @@ const FrostedCard = ({ children }) => (
     initial={{ opacity: 0, scale: 0.95 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.4 }}
-    className="bg-gradient-to-br from-indigo-900/20 via-black/20 to-cyan-900/20 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-lg w-full max-w-sm mx-auto"
+    className="bg-gradient-to-br from-indigo-900/20 via-black/20 to-cyan-900/20 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-lg w-full max-w-sm mx-auto relative overflow-hidden"
   >
-    {children}
+    {/* Floating Glow */}
+    <div className="absolute inset-0 bg-cyan-500/10 blur-2xl animate-pulse"></div>
+    <div className="relative z-10">{children}</div>
   </motion.div>
 );
 
@@ -115,14 +117,12 @@ const AdminLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ✅ Load user from localStorage on mount
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) dispatch(addUser(storedUser));
   }, []);
 
   const handleShowPassword = () => setShowPassword((prev) => !prev);
-
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -134,46 +134,30 @@ const AdminLogin = () => {
         ? "http://localhost:5000/admin/signup"
         : "http://localhost:5000/admin/login";
 
-      // ✅ Payload alag kar diya (Signup vs Login)
       const payload = isSignUp
         ? formData
-        : {
-            email: formData.email,
-            password: formData.password,
-          };
+        : { email: formData.email, password: formData.password };
 
-      // ✅ Axios me credentials allow karna bahut zaruri hai
       const res = await axios.post(url, payload, {
-        withCredentials: true, // 👈 ye add karna must hai for cookies
-        headers: {
-          "Content-Type": "application/json",
-        },
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
       });
 
-      // ✅ Response se student data le lo
       const userData = res.data?.student;
 
       if (userData) {
-        // 1️⃣ LocalStorage me save
         localStorage.setItem("user", JSON.stringify(userData));
-
-        // 2️⃣ Redux state update
         dispatch(addUser(userData));
       }
 
-      // ✅ Toast message
       toast.success(isSignUp ? "Signup Successful!" : "Login Successful!");
-
-      // ✅ Form reset
       setFormData({
         name: "",
         collegeID: "",
         email: "",
         password: "",
       });
-
-      // ✅ Redirect
-      navigate("/admin/dashboard");
+      navigate("/admin/students");
     } catch (err) {
       console.error("Error:", err);
       toast.error(err.response?.data?.message || "Invalid Credentials");
@@ -181,22 +165,14 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-900 via-black to-cyan-900 p-2 font-['Inter',sans-serif]">
-      <a href="/" className=" mb-6 cursor-pointer group">
-        <button
-          className="
-          absolute top-2.5 left-5
-      flex items-center gap-2
-      bg-[#0d0d0d] border border-cyan-500/40
-      px-6 py-2 rounded-full font-semibold text-cyan-300
-      transition-all duration-300 ease-out
-      shadow-[0_0_10px_rgba(0,255,255,0.15)]
-      hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
-      hover:border-cyan-400
-      hover:scale-105
-      active:scale-95
-    "
-        >
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-cyan-900 via-black to-cyan-900 p-2 font-['Inter',sans-serif] text-white relative overflow-hidden">
+      {/* Floating Animated Background Lights */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-500/20 blur-[120px] rounded-full animate-pulse"></div>
+      <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-500/20 blur-[120px] rounded-full animate-pulse"></div>
+
+      {/* Back Button */}
+      <a href="/" className="absolute top-3 left-5">
+        <button className="flex items-center gap-2 bg-[#0d0d0d] border border-cyan-500/40 px-6 py-2 rounded-full font-semibold text-cyan-300 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] hover:border-cyan-400 hover:scale-105">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -211,12 +187,78 @@ const AdminLogin = () => {
               d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
             />
           </svg>
-
           <span className="text-[15px]">Back</span>
         </button>
       </a>
 
+      {/* 🔒 Secure Access Badge */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="mb-4 flex flex-row backdrop-blur-md bg-white/5 border gap-2 border-cyan-400/30 px-6 py-2 rounded-full text-sm  font-semibold shadow-[0_0_15px_rgba(0,255,255,0.15)]"
+      >
+        <span className="text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.5)]">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokewidth="2"
+            strokelinecap="round"
+            strokelinejoin="round"
+            class="lucide lucide-lock-icon lucide-lock"
+          >
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>{" "}
+        </span>
+        Secure Access for <span className="text-cyan-400">Admins Only</span>
+      </motion.div>
+
+      {/* Card */}
       <FrostedCard>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-center mb-6"
+        >
+          {/* Shield Icon */}
+          <div className="bg-gradient-to-br from-cyan-400 to-blue-500 p-3 rounded-full shadow-[0_0_30px_rgba(0,255,255,0.3)] mb-2 ">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokewidth="2"
+              strokelinecap="round"
+              strokelinejoin="round"
+              class="lucide lucide-user-cog-icon lucide-user-cog"
+            >
+              <path d="M10 15H6a4 4 0 0 0-4 4v2" />
+              <path d="m14.305 16.53.923-.382" />
+              <path d="m15.228 13.852-.923-.383" />
+              <path d="m16.852 12.228-.383-.923" />
+              <path d="m16.852 17.772-.383.924" />
+              <path d="m19.148 12.228.383-.923" />
+              <path d="m19.53 18.696-.382-.924" />
+              <path d="m20.772 13.852.924-.383" />
+              <path d="m20.772 16.148.924.383" />
+              <circle cx="18" cy="15" r="3" />
+              <circle cx="9" cy="7" r="4" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-extrabold tracking-wide text-cyan-400">
+            Admin Panel Access
+          </h1>
+        </motion.div>
+
+        {/* Form Container */}
         <AnimatePresence mode="wait">
           <motion.div
             key={isSignUp ? "signup" : "login"}
@@ -225,22 +267,6 @@ const AdminLogin = () => {
             animate="visible"
             exit="exit"
           >
-            <div className="text-center mb-6">
-              <motion.h1
-                initial={{ opacity: 0, y: -15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="text-2xl font-extrabold text-white mb-1"
-              >
-                {isSignUp ? "Create Account" : "Welcome Back"}
-              </motion.h1>
-              <p className="text-gray-400 text-[12px]">
-                {isSignUp
-                  ? "Join GradJob and find your dream role."
-                  : "Sign in to access your dashboard."}
-              </p>
-            </div>
-
             <form onSubmit={handleSubmit}>
               {isSignUp && (
                 <>
@@ -262,6 +288,7 @@ const AdminLogin = () => {
                   />
                 </>
               )}
+
               <AuthInput
                 Icon={Mail}
                 type="email"
@@ -288,7 +315,7 @@ const AdminLogin = () => {
                 }}
                 whileTap={{ scale: 0.97 }}
                 type="submit"
-                className="w-full py-2.5 mt-3 rounded-lg font-bold text-lg bg-gradient-to-r from-cyan-500 to-cyan-500 text-white shadow-md shadow-cyan-500/30 transition-all duration-300"
+                className="w-full py-2.5 mt-3 rounded-lg font-bold text-lg bg-gradient-to-r from-cyan-500 to-cyan-600 text-white shadow-md shadow-cyan-500/30 transition-all duration-300"
               >
                 {isSignUp ? "Sign Up" : "Log In"}
               </motion.button>

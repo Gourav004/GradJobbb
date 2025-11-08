@@ -10,11 +10,12 @@ export const adminViewProfile = async (req, res) => {
       return res.status(404).json({ message: "Admin not found" });
     }
     const students = await Student.find({ collegeID: req.user.collegeID });
-    const studentCount = 0;
+    const studentCount = students.length;
 
     res.status(200).json({
       message: "Profile Fetched Successfully",
       admin: loggedinAdmin,
+      students: studentCount,
     });
 
     console.log(loggedinAdmin.name);

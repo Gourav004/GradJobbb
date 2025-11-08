@@ -181,20 +181,21 @@ const LoginSignup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-900 via-black to-cyan-900 p-2 font-['Inter',sans-serif]">
-      <a href="/" className="inline-block mb-6 cursor-pointer group">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-900 via-black to-cyan-900 p-4 font-['Inter',sans-serif]">
+      {/* 🔹 Fixed Back Button - top-left corner */}
+      <a href="/" className="absolute top-4 left-4 z-50 group">
         <button
           className="
-      flex items-center gap-2
-      bg-[#0d0d0d] border border-cyan-500/40
-      px-6 py-2 rounded-full font-semibold text-cyan-300
-      transition-all duration-300 ease-out
-      shadow-[0_0_10px_rgba(0,255,255,0.15)]
-      hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
-      hover:border-cyan-400
-      hover:scale-105
-      active:scale-95
-    "
+        flex items-center gap-2
+        bg-[#0d0d0d]/80 border border-cyan-500/40
+        px-5 py-2 rounded-full font-semibold text-cyan-300
+        transition-all duration-300 ease-out
+        shadow-[0_0_10px_rgba(0,255,255,0.15)]
+        hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
+        hover:border-cyan-400
+        hover:scale-105
+        active:scale-95
+      "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -211,9 +212,10 @@ const LoginSignup = () => {
             />
           </svg>
 
-          <span className="text-[15px]">Back</span>
+          <span className="text-[14px]">Back</span>
         </button>
       </a>
+
       <FrostedCard>
         <AnimatePresence mode="wait">
           <motion.div

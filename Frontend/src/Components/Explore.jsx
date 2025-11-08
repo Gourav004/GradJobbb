@@ -1,385 +1,443 @@
-import React, { useState, useEffect, useRef } from "react";
-import { motion, useInView, interpolate, scale } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
-  Search,
-  Briefcase,
-  Code,
-  LineChart,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+import {
+  Users,
   DollarSign,
-  LayoutGrid,
-  MapPin,
   TrendingUp,
   Zap,
-  ShieldCheck,
-  BarChart3,
-  Users,
-  Target,
+  Briefcase,
+  Trophy,
 } from "lucide-react";
+import GoalAchievementCards from "./Goals.jsx";
 
-// --- Configuration Data ---
-const STATS_DATA_ANIMATED = [
+const defaultData = [
   {
-    icon: ShieldCheck,
-    title: "Top Tier Roles",
-    value: 1500,
-    suffix: "+",
-    detail: "From Fortune 500 Partners",
+    id: 1,
+    title: "Quarter Goal",
+    value: 85,
+    unit: "%",
+    subtitle: "Placement drive target completion",
+    colorFrom: "#06b6d4",
+    colorTo: "#8b5cf6",
+    svg: (
+      <svg
+        viewBox="0 0 24 24"
+        className="w-9 h-9"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+        <path
+          d="M8 12l2.2 2.4L16 9"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+    type: "progress",
+  },
+  {
+    id: 2,
+    title: "Students Placed",
+    value: 452,
+    unit: "",
+    subtitle: "Total successful placements this year",
+    colorFrom: "#22c55e",
+    colorTo: "#06b6d4",
+    svg: (
+      <svg
+        viewBox="0 0 24 24"
+        className="w-9 h-9"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 2a4 4 0 100 8 4 4 0 000-8z"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M4 20a8 8 0 0116 0"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+    type: "count",
+  },
+  {
+    id: 3,
+    title: "Top Achievements",
+    value: 24,
+    unit: "",
+    subtitle: "Companies added to partner list",
+    colorFrom: "#f59e0b",
+    colorTo: "#ef4444",
+    svg: (
+      <svg
+        viewBox="0 0 24 24"
+        className="w-9 h-9"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 2l2.5 5.5L20 9l-4 3.5L17 19l-5-3-5 3 1-6.5L4 9l5.5-1.5L12 2z"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+    type: "count",
+  },
+];
+
+const STATS = [
+  {
+    id: 1,
+    label: "Students Placed",
+    value: 452,
+    delta: "+8%",
+    icon: Users,
+    color: "text-cyan-400",
+  },
+  {
+    id: 2,
+    label: "Average CTC",
+    value: 7.2,
+    suffix: " LPA",
+    delta: "+12%",
+    icon: DollarSign,
+    color: "text-green-400",
+  },
+  {
+    id: 3,
+    label: "Placement Rate",
+    value: 92,
+    suffix: "%",
+    delta: "+4%",
+    icon: TrendingUp,
     color: "text-indigo-400",
   },
+];
+
+const PLACEMENT_TREND = [
+  { month: "Jul", placements: 70, avg: 5.9 },
+  { month: "Aug", placements: 120, avg: 6.1 },
+  { month: "Sep", placements: 200, avg: 6.8 },
+  { month: "Oct", placements: 280, avg: 7.0 },
+  { month: "Nov", placements: 320, avg: 7.1 },
+  { month: "Dec", placements: 420, avg: 7.2 },
+];
+
+const TOP_RECRUITERS = [
+  { name: "Google", hired: 12 },
+  { name: "Amazon", hired: 10 },
+  { name: "Microsoft", hired: 8 },
+  { name: "TCS", hired: 15 },
+  { name: "Infosys", hired: 11 },
+  { name: "Flipkart", hired: 7 },
+  { name: "Zomato", hired: 9 },
+];
+
+const STUDENTS = [
   {
-    icon: TrendingUp,
-    title: "Salary Growth",
-    value: 18,
-    suffix: "%",
-    detail: "Median Yearly Trend",
-    color: "text-green-400",
+    id: 1,
+    name: "Aisha Sharma",
+    branch: "CSE",
+    placedAt: "Google",
+    ctc: "32 LPA",
   },
   {
-    icon: Briefcase,
-    title: "Total Placements",
-    value: 4500,
-    suffix: "+",
-    detail: "Since January 2023",
-    color: "text-cyan-400",
+    id: 2,
+    name: "Rahul Verma",
+    branch: "IT",
+    placedAt: "Amazon",
+    ctc: "24 LPA",
+  },
+  {
+    id: 3,
+    name: "Sneha R.",
+    branch: "ECE",
+    placedAt: "Microsoft",
+    ctc: "28 LPA",
+  },
+  {
+    id: 4,
+    name: "Gourav",
+    branch: "CSE (AI)",
+    placedAt: "Zomato",
+    ctc: "8 LPA",
   },
 ];
 
-const CATEGORIES = [
-  { name: "Software Dev", icon: Code, filter: "tech" },
-  { name: "Data Science", icon: LineChart, filter: "data" },
-  { name: "Consulting", icon: Briefcase, filter: "consult" },
-  { name: "Finance & Banking", icon: DollarSign, filter: "finance" },
-  { name: "Design & UX", icon: LayoutGrid, filter: "design" },
-];
-
-const CORE_FEATURES = [
-  {
-    icon: Target,
-    title: "Precision Job Targeting",
-    description:
-      "Stop wasting time searching randomly. Our AI sends the most relevant opportunities to your inbox based on your degree, skills, and career goals.",
-    color: "text-cyan-400",
-  },
-  {
-    icon: Users,
-    title: "The Graduate Network",
-    description:
-      "Connect with other graduates and seniors. Get direct guidance on interviews, company culture, and career paths, turning your network into a professional strength.",
-    color: "text-purple-400",
-  },
-  {
-    icon: BarChart3,
-    title: "Exclusive Market Insights",
-    description:
-      "Access exclusive data on average salaries, high-demand skills, and emerging sectors. Make decisions based on real data, not guesses.",
-    color: "text-green-400",
-  },
-];
-
-// --- Framer Motion Variants ---
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 10,
-    },
-  },
-};
-
-// --- Custom Components ---
-const AnimatedCounter = ({ from = 0, to, duration = 2, suffix = "" }) => {
-  const [count, setCount] = useState(from);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
+/* -------------------------
+   Animated Counter
+   ------------------------- */
+const CountUp = ({ end, duration = 2, suffix = "" }) => {
+  const [count, setCount] = useState(1);
 
   useEffect(() => {
-    if (isInView) {
-      let startTime = null;
-      const step = (timestamp) => {
-        if (!startTime) startTime = timestamp;
-        const progress = (timestamp - startTime) / (duration * 1000);
-        const interpolatedValue = interpolate(
-          [0, 1],
-          [from, to]
-        )(Math.min(progress, 1));
-        setCount(Math.round(interpolatedValue));
-        if (progress < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    }
-  }, [isInView, from, to, duration]);
+    let start = 1;
+    const increment = end / (duration * 60);
+    const interval = setInterval(() => {
+      start += increment;
+      if (start >= end) {
+        start = end;
+        clearInterval(interval);
+      }
+      setCount(start);
+    }, 1000 / 60);
+    return () => clearInterval(interval);
+  }, [end, duration]);
 
   return (
-    <motion.span ref={ref} className="text-4xl font-bold text-white mb-1">
-      {new Intl.NumberFormat("en-US").format(count)}
+    <>
+      {Math.floor(count)}
       {suffix}
-    </motion.span>
+    </>
   );
 };
 
-const FrostedCard = ({ children, className = "", motionProps = {} }) => (
+/* -------------------------
+   Reusable Card
+   ------------------------- */
+const FrostCard = ({ children, className = "" }) => (
   <motion.div
-    variants={itemVariants}
-    {...motionProps}
-    className={`
-            bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl 
-            transition-all duration-300 hover:bg-white/10 hover:border-cyan-400/50
-            ${className}
-        `}
+    initial={{ opacity: 0, y: 6 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+    className={`relative bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl p-5 shadow-[0_4px_15px_rgba(6,182,212,0.06)] ${className}`}
   >
     {children}
   </motion.div>
 );
 
-const StatCard = ({ icon: Icon, title, value, detail, color, suffix }) => (
-  <FrostedCard className="flex-1 min-w-[200px] md:min-w-0 p-5">
-    <div className="flex items-center space-x-3 mb-3">
-      <Icon className={`w-6 h-6 ${color} p-1 rounded-md bg-white/5`} />
-      <h3 className="text-sm font-medium text-gray-300 uppercase tracking-wider">
-        {title}
-      </h3>
+/* -------------------------
+   Stat Card
+   ------------------------- */
+const StatCard = ({ icon: Icon, label, value, delta, color, suffix }) => (
+  <FrostCard className="relative flex flex-col gap-4 items-start min-w-[220px]">
+    <div className="absolute top-3 right-3 text-xs font-bold bg-green-500/20 text-green-400 px-2 py-0.5 rounded-md shadow-[0_0_6px_rgba(34,197,94,0.3)]">
+      {delta}
     </div>
-    <AnimatedCounter from={0} to={value} suffix={suffix} duration={2.5} />
-    <p className="text-xs text-gray-400 mt-2">{detail}</p>
-  </FrostedCard>
+    <div className={`flex items-center gap-3 ${color}`}>
+      <div className="p-3 rounded-lg bg-white/5">
+        <Icon className="w-6 h-6" />
+      </div>
+      <div className="text-sm text-gray-300 font-medium">{label}</div>
+    </div>
+    <div className="text-3xl text-white font-extrabold">
+      <CountUp end={parseFloat(value)} suffix={suffix || ""} />
+    </div>
+  </FrostCard>
 );
 
-const DataSpotlightCard = () => (
-  <FrostedCard
-    className="col-span-1 lg:col-span-2 p-8"
-    motionProps={{ transition: { delay: 0.3 } }}
-  >
-    <div className="flex justify-between items-center mb-6">
-      <h2 className="text-2xl font-bold text-white flex items-center">
-        <Zap className="w-6 h-6 mr-3 text-yellow-400 fill-yellow-400/20" />
-        GradJob Data Spotlight:{" "}
-        <span className="text-cyan-400 ml-2">Market Trends</span>
-      </h2>
-    </div>
+/* -------------------------
+   Main Component
+   ------------------------- */
+export default function ExploreDashboard() {
+  const [placementData, setPlacementData] = useState([]);
+  const [recruiters, setRecruiters] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div className="md:col-span-2">
-        <svg
-          viewBox="0 0 400 200"
-          className="w-full h-auto"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#06b6d4" />
-              <stop offset="100%" stopColor="#8b5cf6" />
-            </linearGradient>
-          </defs>
-
-          <path
-            d="M 0 190 L 400 190 M 0 100 L 400 100 M 0 10 L 400 10"
-            stroke="#ffffff20"
-            strokeWidth="1"
-          />
-
-          <motion.path
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 2.5, ease: [0.25, 1, 0.5, 1], delay: 0.5 }}
-            d="M 0 190 C 50 150, 100 120, 150 140 C 200 160, 250 80, 300 110 C 350 130, 400 50"
-            stroke="url(#lineGradient)"
-            strokeWidth="4"
-            fill="none"
-            strokeLinecap="round"
-          />
-
-          {[
-            { x: 0, y: 190, label: "Q1" },
-            { x: 150, y: 140, label: "Q2" },
-            { x: 300, y: 110, label: "Q3" },
-            { x: 400, y: 50, label: "Q4" },
-          ].map(({ x, y, label }, index) => (
-            <motion.circle
-              key={index}
-              cx={x}
-              cy={y}
-              r="5"
-              fill="#00e4ff"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{
-                duration: 0.6,
-                delay: 1.5 + index * 0.3,
-                type: "spring",
-                stiffness: 200,
-              }}
-            />
-          ))}
-        </svg>
-      </div>
-
-      <div className="md:col-span-1 text-left space-y-4">
-        <h3 className="text-xl font-semibold text-cyan-300"> Key Takeaways</h3>
-        <p className="text-sm text-gray-300">
-          <span className="font-bold text-green-400">45%</span>: Highest
-          placement demand growth in Tech Sector.
-        </p>
-        <p className="text-sm text-gray-300">
-          <span className="font-bold text-yellow-400">Remote Roles</span>:
-          Packages for remote jobs increased by 12%, making them popular.
-        </p>
-        <p className="text-sm text-gray-300">
-          <span className="font-bold text-indigo-400">Top Skills</span>: Python,
-          Cloud (AWS/Azure), and GenAI are most in-demand.
-        </p>
-      </div>
-    </div>
-  </FrostedCard>
-);
-
-export const ExplorePage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setPlacementData(PLACEMENT_TREND);
+      setRecruiters(TOP_RECRUITERS);
+      setStudents(STUDENTS);
+      setLoading(false);
+    }, 700);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="min-h-screen bg-[#0a0a0a] p-4 sm:p-8 font-['Inter', sans-serif] text-white"
-    >
-      <motion.header
-        variants={itemVariants}
-        className="mb-10 pt-4 max-w-6xl mx-auto"
-      >
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-white mb-2">
-          <span className="text-cyan-400">Explore</span> Your Career Path
-        </h1>
-        <p className="text-lg text-gray-400">
-          Find jobs, explore data insights, and discover career-defining
-          opportunities.
-        </p>
-      </motion.header>
+    <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#071126] to-[#00141b] py-8 px-4 text-white">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl sm:text-5xl font-extrabold">
+              <span className="text-cyan-400">Grad</span> Placement Dashboard
+            </h1>
+            <p className="text-gray-400 mt-1">
+              Live insights & recruiter trends
+            </p>
+          </div>
 
-      <FrostedCard
-        className="mb-12 p-2 max-w-6xl mx-auto"
-        motionProps={{ transition: { delay: 0.1 } }}
-      >
-        <motion.div
-          variants={itemVariants}
-          className="flex items-center w-full"
-        >
-          <Search className="w-5 cursor-not-allowed h-5 ml-3 text-cyan-400 flex-shrink-0" />
-          <input
-            type="text"
-            placeholder="Search by role, company, or skills (e.g., 'React Developer', 'Goldman Sachs')"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-grow bg-transparent text-white placeholder-gray-500 px-4 py-3 text-base focus:outline-none focus:ring-0 rounded-r-lg"
-          />
-          <motion.button
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 0 10px rgba(6, 182, 212, 0.5)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-cyan-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300"
-          >
-            Search
-          </motion.button>
-        </motion.div>
-      </FrostedCard>
-
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6">Your Career Edge: Key Stats</h2>
-        <div className="flex flex-wrap gap-6 mb-12 justify-center lg:justify-start">
-          {STATS_DATA_ANIMATED.map((stat) => (
-            <StatCard key={stat.title} {...stat} />
-          ))}
-        </div>
-
-        <div className="mb-12">
-          <DataSpotlightCard />
-        </div>
-
-        <h2 className="text-3xl font-bold mb-6">Browse Top Categories</h2>
-        <motion.div
-          variants={containerVariants}
-          className="flex flex-wrap justify-center sm:justify-start gap-4 mb-12"
-        >
-          {CATEGORIES.map(({ name, icon: Icon, filter }) => (
-            <motion.button
-              key={filter}
-              variants={itemVariants}
-              whileHover={{
-                scale: 1.03,
-                backgroundColor: "rgba(6, 182, 212, 0.1)",
-              }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center px-5 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 font-medium transition-all duration-200"
+          <div className="flex items-center gap-3">
+            <a
+              href="/"
+              className="inline-block mb-6 cursor-pointer group relative top-7"
             >
-              <Icon className="w-4 h-4 mr-2" />
-              {name}
-            </motion.button>
-          ))}
-        </motion.div>
-
-        <h2 className="text-3xl font-bold mb-8 mt-12">
-          How GradJob Empowers You
-        </h2>
-        <motion.div
-          variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
-        >
-          {CORE_FEATURES.map((feature, index) => (
-            <FrostedCard
-              key={feature.title}
-              className="p-8 flex flex-col items-start"
-              motionProps={{
-                transition: { delay: 0.2 + index * 0.1 },
-              }}
-            >
-              <div
-                className={`p-4 rounded-full mb-5 ${feature.color} bg-white/10`}
+              <button
+                className="
+      flex items-center gap-2  cursor-pointer
+      bg-[#0d0d0d] border border-cyan-500/40
+      px-6 py-2 rounded-full font-semibold text-cyan-300
+      transition-all duration-300 ease-out
+      shadow-[0_0_10px_rgba(0,255,255,0.15)]
+      hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
+      hover:border-cyan-400
+      hover:scale-105
+      active:scale-95
+    "
               >
-                <feature.icon className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">
-                {feature.title}
-              </h3>
-              <p className="text-gray-400">{feature.description}</p>
-            </FrostedCard>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                  />
+                </svg>
+
+                <span className="text-[15px]">Home</span>
+              </button>
+            </a>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {STATS.map((s) => (
+            <StatCard key={s.id} {...s} />
           ))}
-        </motion.div>
+        </div>
 
-        <motion.div
-          variants={itemVariants}
-          className="text-center py-16 mt-16 border-t border-white/10"
-        >
-          <p className="text-xl font-medium mb-4 text-gray-300">
-            Ready to take the next step?
-          </p>
-          <motion.a
-            href="/login"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            className="bg-gradient-to-r from-indigo-500 to-cyan-500 text-white text-lg px-10 py-3 rounded-full font-bold shadow-2xl shadow-cyan-500/40"
-          >
-            Create Account
-          </motion.a>
-        </motion.div>
+        {/* Chart */}
+        <FrostCard>
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-400" /> Placement Trend
+              </h2>
+              <p className="text-gray-400 text-sm">
+                Placements & avg CTC over months
+              </p>
+            </div>
+          </div>
+          <div className="w-full h-64">
+            {loading ? (
+              <div className="flex items-center justify-center text-gray-500 h-full">
+                Loading...
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={placementData}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorCyan" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorGreen" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.6} />
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke="#ffffff12" vertical={false} />
+                  <XAxis dataKey="month" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip
+                    contentStyle={{
+                      background: "#0b1220",
+                      border: "none",
+                      color: "#fff",
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="placements"
+                    stroke="#06b6d4"
+                    fill="url(#colorCyan)"
+                    strokeWidth={2}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="avg"
+                    stroke="#22c55e"
+                    fill="url(#colorGreen)"
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </FrostCard>
+
+        {/* Recruiters & Students */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Top Recruiters */}
+          <FrostCard>
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <Briefcase className="text-cyan-400" /> Top Recruiters
+            </h2>
+            <div className="space-y-3">
+              {recruiters.map((r, i) => (
+                <div
+                  key={i}
+                  className="flex justify-between items-center bg-white/5 px-4 py-2 rounded-lg hover:bg-white/10 transition"
+                >
+                  <span className="text-gray-300 font-medium">{r.name}</span>
+                  <span className="text-cyan-400 font-semibold">
+                    {r.hired} hires
+                  </span>
+                </div>
+              ))}
+            </div>
+          </FrostCard>
+
+          {/* Top Students */}
+          <FrostCard>
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <Trophy className="text-yellow-400" /> Top Students
+            </h2>
+            <div className="space-y-3">
+              {students.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex justify-between items-center bg-white/5 px-4 py-2 rounded-lg hover:bg-white/10 transition"
+                >
+                  <div>
+                    <p className="text-white font-semibold">{s.name}</p>
+                    <p className="text-xs text-gray-400">{s.branch}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-cyan-400 font-semibold">{s.placedAt}</p>
+                    <p className="text-sm text-gray-400">{s.ctc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FrostCard>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
-};
-
-export default ExplorePage;
+}
