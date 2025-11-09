@@ -171,7 +171,7 @@ function AppliedJobs() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-4">
             <a href="/dashboard" className="group">
-              <button className="flex items-center gap-2 bg-zinc-900/50 border border-zinc-800 px-4 py-2 rounded-full font-medium text-zinc-400 transition-all duration-300 hover:border-cyan-500/50 hover:text-cyan-400 active:scale-95">
+              <button className="flex items-center gap-2 bg-zinc-900/50 border border-cyan-500/50 px-4 py-2 rounded-full font-medium text-cyan-400 cursor-pointer hover:scale-105 transition-all duration-300 hover:border-cyan-500/50 hover:text-cyan-400 active:scale-95">
                 <Icons.BackArrow className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 <span className="text-sm">Back</span>
               </button>

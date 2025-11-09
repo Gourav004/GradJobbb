@@ -18,6 +18,8 @@ import AdminViewProfile from "./Components/AdminViewProfile.jsx";
 import AdminViewJobs from "./Components/adminViewJobs.jsx";
 import AdminViewJob from "./Components/AdminViewAJob.jsx";
 import AdminPostJob from "./Components/AdminPostJob.jsx";
+import DashboardContent from "./Components/adminDashBoard.jsx";
+import StudentDashboardContent from "./Components/Dashboard.jsx";
 
 function App() {
   return (
@@ -30,14 +32,14 @@ function App() {
           <Route path="/" element={<Hero />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/login" element={<LoginSignup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<StudentDashboardContent />} />
           <Route path="/studentProfile" element={<StudentProfileView />} />
           <Route path="/jobs" element={<ViewJobs />} />
           <Route path="/editProfile" element={<EditProfile />} />
           <Route path="/viewAJob/:id" element={<ViewJob />} />
           <Route path="/appliedJobs" element={<AppliedJobs />} />
           <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/students" element={<AdminDashboard />} />
+          <Route path="/admin/students" element={<DashboardContent />} />
           <Route path="/admin/profile" element={<AdminViewProfile />} />
           <Route path="/admin/jobs" element={<AdminViewJobs />} />
           <Route path="/admin/viewJob/:id" element={<AdminViewJob />} />
