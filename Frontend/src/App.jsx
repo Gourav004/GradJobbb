@@ -20,6 +20,7 @@ import AdminViewJob from "./Components/AdminViewAJob.jsx";
 import AdminPostJob from "./Components/AdminPostJob.jsx";
 import DashboardContent from "./Components/adminDashBoard.jsx";
 import StudentDashboardContent from "./Components/Dashboard.jsx";
+import Showcase from "./Components/Showcase.jsx";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/admin/jobs" element={<AdminViewJobs />} />
           <Route path="/admin/viewJob/:id" element={<AdminViewJob />} />
           <Route path="/admin/postJob" element={<AdminPostJob />} />
+          <Route path="/showcase" element={<Showcase />} />
         </Routes>
       </BrowserRouter>
     </Provider>

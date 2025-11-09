@@ -11,8 +11,6 @@ function AdminViewProfile() {
       const res = await axios.get("http://localhost:5000/admin/profile", {
         withCredentials: true,
       });
-
-      console.log("Profile Fetched", res.data.admin);
       setAdmin(res.data.admin);
       setStudentCount(res.data.students);
     } catch (error) {

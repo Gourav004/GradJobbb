@@ -32,8 +32,7 @@ function AdminViewJob() {
       clearTimeout(timeout);
       setJob(res.data);
     } catch (error) {
-      if (axios.isCancel(error)) console.log("Fetch cancelled");
-      else console.error("Fetch job error:", error.message);
+      console.error("Fetch job error:", error.message);
     } finally {
       setLoading(false);
     }

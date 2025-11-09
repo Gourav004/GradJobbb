@@ -17,8 +17,6 @@ export const adminViewProfile = async (req, res) => {
       admin: loggedinAdmin,
       students: studentCount,
     });
-
-    console.log(loggedinAdmin.name);
   } catch (error) {
     console.error("Error fetching profile:", error.message);
     res.status(500).json({ message: "Server Error", error: error.message });

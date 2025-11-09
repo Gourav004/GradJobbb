@@ -60,13 +60,11 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ id: student._id }, "GRADJOB", { expiresIn: "1d" });
-    console.log("TOken -> ", token);
     // ✅ cookie set karte waqt options lagana mat bhoolo
     res.cookie("token", token, {
       httpOnly: true,
     });
 
-    console.log("✅ Token cookie set successfully");
 
     // ✅ sirf ek hi response
     return res.status(200).json({

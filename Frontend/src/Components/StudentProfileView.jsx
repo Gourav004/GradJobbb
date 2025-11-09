@@ -13,7 +13,6 @@ function StudentProfileView() {
         withCredentials: true,
       });
       const fetchedStudent = res.data.student;
-      console.log("✅ API data:", fetchedStudent);
       setProfile(fetchedStudent);
     } catch (error) {
       console.log("❌ Error:", error.message);
@@ -23,12 +22,6 @@ function StudentProfileView() {
   useEffect(() => {
     fetchProfile();
   }, []);
-
-  useEffect(() => {
-    if (profile) {
-      console.log("✅ Updated state:", profile);
-    }
-  }, [profile]);
 
   return (
     <motion.div

@@ -2,25 +2,32 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NoDataFound from "./NoDataFound.jsx";
 
 function ViewJobs() {
-  // --- LOCAL STATE INSTEAD OF REDUX ---
+  // --- LOCAL STATE ---
   const [allJobs, setAllJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // --- FILTER STATES ---
+  const [cgpaFilter, setCgpaFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [skillFilter, setSkillFilter] = useState("");
+
   const navigate = useNavigate();
 
   const handleViewJobs = async () => {
     try {
-      setIsLoading(true);
       const res = await axios.get("http://localhost:5000/user/viewjobs", {
         withCredentials: true,
       });
-      // Assuming API returns { allJobs: [...] } based on previous Redux usage
-      setAllJobs(res.data.allJobs || []);
+      setIsLoading(true);
+      setTimeout(() => {
+        setAllJobs(res.data.allJobs);
+        setIsLoading(false);
+      }, 1500);
+      // -----------------------------
     } catch (error) {
       console.log("❌ Error:", error.message);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -29,16 +36,48 @@ function ViewJobs() {
     handleViewJobs();
   }, []);
 
-  // --- SORTING LOGIC ---
-  const sortedJobs = useMemo(() => {
+  // --- FILTERING & SORTING LOGIC ---
+  const filteredAndSortedJobs = useMemo(() => {
     if (!allJobs) return [];
 
-    return [...allJobs].sort((a, b) => {
+    let processedJobs = [...allJobs];
+
+    // 1. CGPA Filter (Show jobs you are eligible for: job.minCGPA <= your CGPA)
+    if (cgpaFilter) {
+      const userCgpa = parseFloat(cgpaFilter);
+      if (!isNaN(userCgpa)) {
+        processedJobs = processedJobs.filter((job) => {
+          const jobMinCgpa = parseFloat(job.minCGPA) || 0;
+          return jobMinCgpa <= userCgpa;
+        });
+      }
+    }
+
+    // 2. Location Filter (Case-insensitive partial match)
+    if (locationFilter) {
+      const lowerLoc = locationFilter.toLowerCase().trim();
+      processedJobs = processedJobs.filter((job) =>
+        job.location?.toLowerCase().includes(lowerLoc)
+      );
+    }
+
+    // 3. Skills Filter (Checks if ANY required skill matches input)
+    if (skillFilter) {
+      const lowerSkill = skillFilter.toLowerCase().trim();
+      processedJobs = processedJobs.filter((job) =>
+        job.skillsRequired?.some((skill) =>
+          skill.toLowerCase().includes(lowerSkill)
+        )
+      );
+    }
+
+    // 4. Sort (Newest first)
+    return processedJobs.sort((a, b) => {
       const dateA = new Date(a.postedAt || a.createdAt || 0);
       const dateB = new Date(b.postedAt || b.createdAt || 0);
       return dateB - dateA;
     });
-  }, [allJobs]);
+  }, [allJobs, cgpaFilter, locationFilter, skillFilter]);
 
   const isNewJob = (dateString) => {
     if (!dateString) return false;
@@ -65,35 +104,104 @@ function ViewJobs() {
   return (
     <div className="text-white bg-gray-950 min-h-screen p-6 md:p-8 font-sans">
       {/* --- Top Navigation --- */}
-      <div className="max-w-7xl mx-auto flex items-center mb-10">
-        <a href="/dashboard" className="inline-block cursor-pointer group mr-6">
-          <button className="flex items-center gap-2 bg-[#0d0d0d] border border-cyan-500/30 px-5 py-2.5 rounded-full font-semibold text-cyan-300 transition-all duration-300 ease-out shadow-[0_0_15px_rgba(0,255,255,0.1)] hover:shadow-[0_0_20px_rgba(0,255,255,0.25)] hover:border-cyan-400 hover:-translate-x-1 active:scale-95">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="2.5"
-              stroke="currentColor"
-              className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <div className="flex items-center">
+          <a
+            href="/dashboard"
+            className="inline-block cursor-pointer group mr-6"
+          >
+            <button className="flex items-center gap-2 bg-[#0d0d0d] border border-cyan-500/30 px-5 py-2.5 rounded-full font-semibold text-cyan-300 transition-all duration-300 ease-out shadow-[0_0_15px_rgba(0,255,255,0.1)] hover:shadow-[0_0_20px_rgba(0,255,255,0.25)] hover:border-cyan-400 hover:-translate-x-1 active:scale-95">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2.5"
+                stroke="currentColor"
+                className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+              </svg>
+              <span className="text-sm">Back</span>
+            </button>
+          </a>
+          <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">
+            Available Opportunities
+          </h1>
+        </div>
+      </div>
+
+      {/* --- FILTERS SECTION --- */}
+      <div className="max-w-7xl mx-auto mb-8 p-4 bg-gray-900/30 backdrop-blur-sm rounded-2xl border border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* CGPA Filter */}
+          <div className="relative">
+            <label className="text-xs text-gray-400 ml-2 mb-1 block">
+              Filter by your CGPA
+            </label>
+            <input
+              type="number"
+              placeholder="e.g. 7.5"
+              value={cgpaFilter}
+              onChange={(e) => setCgpaFilter(e.target.value)}
+              className="w-full bg-gray-950 text-white placeholder-gray-600 px-4 py-2.5 rounded-xl border border-white/10 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
+            />
+          </div>
+
+          {/* Location Filter */}
+          <div className="relative">
+            <label className="text-xs text-gray-400 ml-2 mb-1 block">
+              Filter by Location
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Bangalore, Remote"
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+              className="w-full bg-gray-950 text-white placeholder-gray-600 px-4 py-2.5 rounded-xl border border-white/10 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
+            />
+          </div>
+
+          {/* Skills Filter */}
+          <div className="relative">
+            <label className="text-xs text-gray-400 ml-2 mb-1 block">
+              Filter by Skill
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. React, Python"
+              value={skillFilter}
+              onChange={(e) => setSkillFilter(e.target.value)}
+              className="w-full bg-gray-950 text-white placeholder-gray-600 px-4 py-2.5 rounded-xl border border-white/10 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Active Filters Summary */}
+        {(cgpaFilter || locationFilter || skillFilter) && (
+          <div className="mt-4 flex items-center justify-between text-sm text-gray-400">
+            <span>Found {filteredAndSortedJobs.length} matches.</span>
+            <button
+              onClick={() => {
+                setCgpaFilter("");
+                setLocationFilter("");
+                setSkillFilter("");
+              }}
+              className="text-cyan-400 hover:text-cyan-300 underline text-xs transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
-              />
-            </svg>
-            <span className="text-sm">Back</span>
-          </button>
-        </a>
-        <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">
-          Available Opportunities
-        </h1>
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* --- JOB LIST --- */}
       <div className="max-w-7xl mx-auto space-y-6">
-        {sortedJobs.length > 0 ? (
-          sortedJobs.map((job, index) => {
+        {filteredAndSortedJobs.length > 0 ? (
+          filteredAndSortedJobs.map((job, index) => {
             const isNew = isNewJob(job.postedAt || job.createdAt);
             return (
               <motion.div
@@ -107,7 +215,7 @@ function ViewJobs() {
                   ease: "easeOut",
                 }}
                 className="flex flex-col md:flex-row bg-gray-900/50 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/5
-                            hover:border-cyan-500/30 hover:bg-gray-900/80 transition-all duration-300 group relative overflow-hidden"
+                                      hover:border-cyan-500/30 hover:bg-gray-900/80 transition-all duration-300 group relative overflow-hidden"
               >
                 {/* New Badge if applicable */}
                 {isNew && (
@@ -225,7 +333,7 @@ function ViewJobs() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="w-full md:w-auto bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 px-6 rounded-xl 
-                                   shadow-lg shadow-cyan-500/20 transition-all duration-300 flex items-center justify-center gap-2"
+                                 cursor-pointer shadow-lg shadow-cyan-500/20 transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     View Details
                     <ArrowRightIcon className="w-4 h-4" />
@@ -244,7 +352,30 @@ function ViewJobs() {
   );
 }
 
-// --- Simple Internal Icons to avoid extra imports if not available ---
+// --- Internal Components & Icons ---
+const NoDataFound = () => (
+  <div className="flex flex-col items-center justify-center text-gray-500 py-10 opacity-70">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-20 w-20 mb-4 text-gray-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <p className="text-xl font-semibold text-gray-400">
+      No Opportunities Found
+    </p>
+    <p className="text-sm mt-2">Try adjusting your filters.</p>
+  </div>
+);
+
 const Building2Icon = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

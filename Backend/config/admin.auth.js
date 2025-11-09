@@ -5,7 +5,6 @@ const adminAuth = async (req, res, next) => {
   try {
     // ✅ Token should come from cookies
     const token = req.cookies.token;
-    console.log("Token of Admin Auth ", token);
 
     if (!token) {
       return res.status(401).json({ message: "No token provided" });

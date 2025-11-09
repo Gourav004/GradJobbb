@@ -27,5 +27,5 @@ app.use("/admin", AdminAuth);
 
 // ✅ Step 5: Connect to DB and start server
 connectDB().then(() => {
-  app.listen(5000, () => console.log(`🚀 Server running on port 5000 ✅`));
+  app.listen(5000S);
 });

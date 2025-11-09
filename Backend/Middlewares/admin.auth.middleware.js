@@ -38,10 +38,7 @@ export const signup = async (req, res) => {
     const token = jwt.sign({ id: newAdmin._id }, "GRADJOB", {
       expiresIn: "1d",
     });
-    console.log(token);
     res.cookie("token", token);
-
-    console.log("User created successfully");
     return res.status(201).json({
       message: "Admin created successfully",
       Admin: {

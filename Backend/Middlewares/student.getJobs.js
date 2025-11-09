@@ -4,7 +4,6 @@ export const studentGetJob = async (req, res) => {
   try {
     // ✅ Get student's college ID from authenticated user
     const studentCollegeID = req.user.collegeID;
-    console.log("🎓 Student College ID:", studentCollegeID);
 
     // ✅ Find jobs related to that college
     const jobsList = await Job.find({ collegeID: studentCollegeID });
@@ -19,7 +18,6 @@ export const studentGetJob = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Error in studentGetJob:", error.message);
-    console.log(req.user);
     res.status(500).json({ message: "ERROR", error: error.message });
   }
 };
