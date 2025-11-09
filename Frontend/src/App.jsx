@@ -3,8 +3,7 @@ import Hero from "./Components/Hero.jsx";
 import Explore from "./Components/Explore.jsx";
 import LoginSignup from "./Components/Login.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "react-hot-toast"; // <-- import Toaster
-import Dashboard from "./Components/Dashboard";
+import { Toaster } from "react-hot-toast";
 import appStore from "./Store/AppStore.jsx";
 import { Provider } from "react-redux";
 import StudentProfileView from "./Components/StudentProfileView.jsx";
@@ -15,7 +14,7 @@ import AppliedJobs from "./Components/AppliedJobs.jsx";
 import AdminLogin from "./Components/AdminLogin.jsx";
 import AdminDashboard from "./Components/adminDashBoard.jsx";
 import AdminViewProfile from "./Components/AdminViewProfile.jsx";
-import AdminViewJobs from "./Components/adminViewJobs.jsx";
+import AdminViewJobs from "./Components/AdminViewJobs.jsx";
 import AdminViewJob from "./Components/AdminViewAJob.jsx";
 import AdminPostJob from "./Components/AdminPostJob.jsx";
 import DashboardContent from "./Components/adminDashBoard.jsx";
