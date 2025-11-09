@@ -4,7 +4,7 @@ import { User, Mail, Lock, Key } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addUser } from "@/Store/userSlice";
 
 const containerVariants = {
@@ -108,71 +108,45 @@ const LoginSignup = () => {
   const [formData, setFormData] = useState({
     name: "",
     collegeID: "",
-    email: "test@mail.com",
-    password: "Test@123",
+    email: "",
+    password: "",
   });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ✅ Load user from localStorage on mount
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) dispatch(addUser(storedUser));
-  }, []);
+  }, [dispatch]);
 
   const handleShowPassword = () => setShowPassword((prev) => !prev);
-
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const url = isSignUp
         ? "http://localhost:5000/user/signup"
         : "http://localhost:5000/user/login";
-
-      // ✅ Payload alag kar diya (Signup vs Login)
       const payload = isSignUp
         ? formData
-        : {
-            email: formData.email,
-            password: formData.password,
-          };
+        : { email: formData.email, password: formData.password };
 
-      // ✅ Axios me credentials allow karna bahut zaruri hai
       const res = await axios.post(url, payload, {
-        withCredentials: true, // 👈 ye add karna must hai for cookies
-        headers: {
-          "Content-Type": "application/json",
-        },
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
       });
 
-      // ✅ Response se student data le lo
       const userData = res.data?.student;
-
       if (userData) {
-        // 1️⃣ LocalStorage me save
         localStorage.setItem("user", JSON.stringify(userData));
-
-        // 2️⃣ Redux state update
         dispatch(addUser(userData));
       }
 
-      // ✅ Toast message
       toast.success(isSignUp ? "Signup Successful!" : "Login Successful!");
-
-      // ✅ Form reset
-      setFormData({
-        name: "",
-        collegeID: "",
-        email: "",
-        password: "",
-      });
-
-      // ✅ Redirect
+      setFormData({ name: "", collegeID: "", email: "", password: "" });
       navigate("/dashboard");
     } catch (err) {
       console.error("Error:", err);
@@ -182,21 +156,9 @@ const LoginSignup = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-900 via-black to-cyan-900 p-4 font-['Inter',sans-serif]">
-      {/* 🔹 Fixed Back Button - top-left corner */}
+      {/* 🔹 Back Button */}
       <a href="/" className="absolute top-4 left-4 z-50 group">
-        <button
-          className="
-        flex items-center gap-2
-        bg-[#0d0d0d]/80 border border-cyan-500/40
-        px-5 py-2 rounded-full font-semibold text-cyan-300
-        transition-all duration-300 ease-out
-        shadow-[0_0_10px_rgba(0,255,255,0.15)]
-        hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
-        hover:border-cyan-400
-        hover:scale-105
-        active:scale-95
-      "
-        >
+        <button className="flex items-center gap-2 bg-[#0d0d0d]/80 border border-cyan-500/40 px-5 py-2 rounded-full font-semibold text-cyan-300 transition-all duration-300 ease-out hover:shadow-[0_0_20px_rgba(0,255,255,0.35)] hover:border-cyan-400 hover:scale-105 active:scale-95">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -211,7 +173,6 @@ const LoginSignup = () => {
               d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
             />
           </svg>
-
           <span className="text-[14px]">Back</span>
         </button>
       </a>
@@ -225,6 +186,29 @@ const LoginSignup = () => {
             animate="visible"
             exit="exit"
           >
+            {/* 🎓 Centered Graduation Icon with double cyan border */}
+            <div className="flex justify-center mb-5">
+              <div className="relative w-16 h-16 flex items-center justify-center rounded-full border-2 border-cyan-400/70 before:absolute before:inset-0 before:rounded-full before:border-2 before:border-cyan-300/40 before:scale-110 before:opacity-50 before:animate-pulse">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="36"
+                  height="36"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-cyan-400"
+                >
+                  <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z" />
+                  <path d="M22 10v6" />
+                  <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Heading */}
             <div className="text-center mb-6">
               <motion.h1
                 initial={{ opacity: 0, y: -15 }}
@@ -241,6 +225,7 @@ const LoginSignup = () => {
               </p>
             </div>
 
+            {/* Form */}
             <form onSubmit={handleSubmit}>
               {isSignUp && (
                 <>
@@ -294,6 +279,7 @@ const LoginSignup = () => {
               </motion.button>
             </form>
 
+            {/* Toggle */}
             <div className="text-center mt-4">
               <button
                 onClick={() => setIsSignUp((prev) => !prev)}

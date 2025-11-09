@@ -2,6 +2,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NoDataFound from "./NoDataFound.jsx";
 
 function ViewJobs() {
   // --- LOCAL STATE INSTEAD OF REDUX ---
@@ -130,7 +131,7 @@ function ViewJobs() {
                       </h2>
                     </div>
 
-                    {/* Match Badge (Optional) */}
+                    {/* Match Badge */}
                     <div className="bg-gradient-to-r from-green-500/10 to-green-500/10 border border-green-500/20 text-green-300 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
                       {Math.floor(Math.random() * 20) + 80}% Match
                     </div>
@@ -151,6 +152,27 @@ function ViewJobs() {
                     <span className="bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5">
                       <BriefcaseIcon className="w-3.5 h-3.5" />
                       {job.type}
+                    </span>
+
+                    {/* ✅ CGPA Tag (Yellow Theme + SVG Icon) */}
+                    <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-circle-alert-icon text-yellow-400"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" x2="12" y1="8" y2="12" />
+                        <line x1="12" x2="12.01" y1="16" y2="16" />
+                      </svg>
+                      CGPA: {job.minCGPA}+
                     </span>
 
                     {/* Location */}
@@ -213,8 +235,8 @@ function ViewJobs() {
             );
           })
         ) : (
-          <div className="text-center py-20 text-gray-500">
-            No job openings available at the moment.
+          <div className="text-center py-20 flex justify-center items-center scroll-smooth text-gray-500">
+            <NoDataFound />
           </div>
         )}
       </div>

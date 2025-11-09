@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import NoDataFound from "./NoDataFound.jsx";
 
 // --- ICONS ---
 const Icons = {
@@ -189,12 +190,13 @@ function AppliedJobs() {
 
         {/* 🔹 Job Cards Grid */}
         {jobs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-zinc-900/20 border border-white/5 rounded-2xl">
-            <Icons.Clipboard className="w-16 h-16 text-zinc-700 mb-4" />
-            <p className="text-zinc-500 text-lg">No applications found yet.</p>
+          <div className="flex flex-col items-center justify-center py-1 bg-zinc-900/20 border border-white/5 rounded-2xl">
+            <p className="text-zinc-500 text-lg">
+              <NoDataFound />
+            </p>
             <a
-              href="/dashboard"
-              className="mt-4 text-cyan-400 hover:underline text-sm"
+              href="/jobs"
+              className="mb-1 text-cyan-400 hover:underline text-sm"
             >
               Explore Jobs
             </a>

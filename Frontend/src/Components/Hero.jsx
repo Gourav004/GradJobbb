@@ -1,268 +1,287 @@
 import React from "react";
 import { motion } from "framer-motion";
-// import { HiArrowUpRight } from "react-icons/hi"; // Removed this failing import
 
 // --- Framer Motion Variants ---
 const staggerContainer = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.3 },
+    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
   },
 };
 
-const textItem = {
-  hidden: { opacity: 0, y: 50, scale: 0.95 },
+const fadeInUp = {
+  hidden: { opacity: 0, y: 40 },
   show: {
     opacity: 1,
     y: 0,
-    scale: 1,
-    transition: { type: "spring", stiffness: 100, damping: 20 },
+    transition: { type: "spring", stiffness: 50, damping: 20 },
   },
 };
 
-// --- Button Animation ---
-const buttonHover = {
-  scale: 1.05,
-  boxShadow: "0px 0px 20px rgba(6, 182, 212, 0.4)",
-  transition: { type: "spring", stiffness: 200, damping: 10 },
-};
-
-const secondaryButtonHover = {
-  scale: 1.05,
-  boxShadow: "0px 0px 20px rgba(255, 255, 255, 0.3)",
-  transition: { type: "spring", stiffness: 200, damping: 10 },
-};
-
-const buttonTap = { scale: 0.97 };
-
-// --- Floating Glow Animation ---
-const pulseGlow = {
-  scale: [1, 1.05, 1],
-  opacity: [0.6, 1, 0.6],
-  transition: { duration: 5, repeat: Infinity, ease: "easeInOut" },
-};
-
-// --- Floating Data Point Component ---
+// --- Floating Data Point Component (Enhanced) ---
 const FloatingPoint = ({ top, left, right, bottom, name, value, delay }) => {
-  const positionClass = `
-    ${top ? "top-1/4" : ""}
-    ${left ? "left-3" : ""}
-    ${right ? "right-3" : ""}
-    ${bottom ? "bottom-16" : ""}
-  `;
+  // Positioning logic
+  const positionStyle = {};
+  if (top) positionStyle.top = "20%";
+  if (bottom) positionStyle.bottom = "15%";
+  if (left) positionStyle.left = "5%";
+  if (right) positionStyle.right = "5%";
 
   return (
     <motion.div
-      // Added `hidden sm:flex` to hide on mobile and show on larger screens
-      className={`absolute text-white/50 text-xs sm:text-sm hidden sm:flex flex-col items-start p-2 cursor-pointer hover:text-white transition-colors duration-300 ${positionClass} z-10`}
-      initial={{ opacity: 0, scale: 0.8 }}
+      className="absolute hidden lg:flex items-center gap-3 p-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-xl z-20"
+      style={positionStyle}
+      initial={{ opacity: 0, scale: 0, y: 20 }}
       animate={{
         opacity: 1,
         scale: 1,
-        ...pulseGlow,
-        x: [0, 15 * (delay % 2 === 0 ? 1 : -1), 0],
-        y: [0, 8 * (delay % 2 === 0 ? -1 : 1), 0],
+        y: [0, -10, 0],
       }}
       transition={{
-        duration: 1,
-        delay: 1 + delay * 0.2,
-        x: { repeat: Infinity, duration: 7 + delay, ease: "easeInOut" },
-        y: { repeat: Infinity, duration: 7 + delay, ease: "easeInOut" },
-        ...pulseGlow.transition,
+        y: {
+          duration: 4 + delay,
+          repeat: Infinity,
+          ease: "easeInOut",
+        },
+        opacity: { duration: 0.5, delay: 1 + delay * 0.2 },
+        scale: { type: "spring", stiffness: 100, delay: 1 + delay * 0.2 },
       }}
     >
-      <div className="flex items-center space-x-1">
-        <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-md shadow-cyan-400/50" />
-        <span className="text-[10px] sm:text-xs">{name}</span>
+      <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+        <div className="h-4 w-4 rounded-full bg-white animate-pulse" />
       </div>
-      <span className="text-[12px] sm:text-sm font-semibold ml-3">{value}</span>
+      <div className="flex flex-col">
+        <span className="text-[10px] uppercase tracking-wider text-cyan-300 font-semibold">
+          {name}
+        </span>
+        <span className="text-lg font-bold text-white leading-none">
+          {value}
+        </span>
+      </div>
     </motion.div>
   );
 };
 
-// --- Main Hero Component ---
 export default function Hero() {
   return (
     <>
-      {/* This style tag imports the fonts and adds the blob animation.
-        In a real app, you'd put this in your index.html or global CSS file.
-      */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@300;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@300;400;600;800&display=swap');
 
-        /* Keyframes for the 'animate-blob' class */
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
+        :root {
+          --font-primary: 'Inter', sans-serif;
+          --font-heading: 'Outfit', sans-serif;
         }
 
-        .animate-blob {
-          animation: blob 7s infinite ease-in-out;
+        /* Subtle Grid Background */
+        .bg-grid {
+          background-size: 50px 50px;
+          background-image: 
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
         }
+        
+        /* Ambient light moving around */
+        @keyframes move-light {
+          0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.4; }
+          50% { transform: translate(50px, 30px) scale(1.1); opacity: 0.6; }
+        }
+        .animate-light { animation: move-light 8s ease-in-out infinite; }
       `}</style>
 
-      <div className="relative w-full min-h-screen bg-[#0a0a0a] text-white overflow-hidden font-['Inter',sans-serif]">
-        {/* Background Blobs */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-cyan-400/40 to-transparent rounded-full blur-3xl opacity-40 animate-blob" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-cyan-400/40 to-transparent rounded-full blur-3xl opacity-40 animate-blob" />
+      <div className="relative w-full min-h-screen bg-[#0a0a0a] text-white overflow-hidden font-['Inter',sans-serif] selection:bg-cyan-500/30">
+        {/* --- ENHANCED BACKGROUND --- */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          {/* Grid Overlay */}
+          <div className="absolute inset-0 bg-grid opacity-20" />
+          {/* Main Spotlight */}
+          <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80vw] h-[40vh] bg-cyan-500/20 blur-[120px] rounded-full animate-light" />
+          {/* Secondary Blobs */}
+          <div
+            className="absolute top-[20%] left-[10%] w-72 h-72 bg-blue-600/20 blur-[100px] rounded-full animate-pulse"
+            style={{ animationDuration: "12s" }}
+          />
+          <div
+            className="absolute bottom-[10%] right-[10%] w-96 h-96 bg-cyan-400/10 blur-[100px] rounded-full animate-pulse"
+            style={{ animationDuration: "15s" }}
+          />
         </div>
 
         <div className="relative z-10">
-          {/* Navbar */}
-          <nav className="flex justify-between items-center px-6 mt-5 sm:px-8 py-4 relative">
+          {/* --- NAVBAR --- */}
+          <nav className="flex justify-between items-center px-6 mt-6 sm:px-10 py-4">
             {/* Left - Logo */}
-            <div className="text-xl sm:text-2xl font-bold">
+            <div
+              className="text-2xl font-extrabold tracking-tight"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              
               Grad<span className="text-cyan-400">Job</span>
             </div>
-            {/* Center - Glass Navigation Tabs */}
-            <div
-              className="
-    absolute left-1/2 -translate-x-1/2 
-    flex items-center gap-6  cursor-pointer
-    px-6 py-2 rounded-full 
-    backdrop-blur-md bg-white/5 border border-white/10 
-    text-gray-300 text-sm shadow-[0_0_12px_rgba(255,255,255,0.1)]
-  "
-            >
-              <a
-                className="
-      text-white font-medium flex items-center gap-1 
-      transition-all duration-500 ease-in-out
-      hover:scale-110 hover:text-cyan-300
-    "
-              >
-                <span className="text-cyan-400 text-[10px]">●</span> Home
-              </a>
 
+            {/* Center - Glass Navigation Tabs (KEPT EXACTLY AS REQUESTED) */}
+            <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-1 p-1.5 rounded-full backdrop-blur-md bg-white/5 border border-white/10 shadow-lg shadow-black/5">
+              <a
+                href="#"
+                className="px-5 py-2 rounded-full bg-white/10 text-white text-sm font-medium flex items-center gap-2 transition-all hover:bg-white/20"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />{" "}
+                Home
+              </a>
               <a
                 href="/admin"
-                className="
-      transition-all duration-500 ease-in-out 
-      hover:scale-110 hover:text-white
-    "
+                className="px-5 py-2 rounded-full text-zinc-400 hover:text-white text-sm font-medium transition-all hover:bg-white/5"
               >
                 Admin
               </a>
-
               <a
                 href="#"
-                className="
-      transition-all duration-500 ease-in-out 
-      hover:scale-110 hover:text-white
-    "
+                className="px-5 py-2 rounded-full text-zinc-400 hover:text-white text-sm font-medium transition-all hover:bg-white/5"
               >
                 Showcase
               </a>
             </div>
-            {/* Right - Login Button */}hover:scale-105 duration-150
+
+            {/* Right - Login Button */}
             <motion.a
               href="/login"
-              className="bg-cyan-500 text-white font-medium px-4 py-1 rounded-lg sm:text-base shadow-lg shadow-cyan-500/20"
-              whileHover={buttonHover}
-              whileTap={buttonTap}
-              style={{ fontWeight: 500 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-2.5 rounded-full text-sm shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all"
             >
               Login
             </motion.a>
+            {/* Mobile menu placeholder if needed */}
+            <button className="sm:hidden text-zinc-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+            </button>
           </nav>
-          {/* Hero Section */}
-          <div className="flex flex-col justify-center items-center h-[80vh] text-center px-4 sm:px-8">
+
+          {/* --- HERO SECTION --- */}
+          <div className="flex flex-col justify-center items-center min-h-[85vh] text-center px-4 relative">
             <motion.div
               variants={staggerContainer}
               initial="hidden"
               animate="show"
-              className="max-w-3xl sm:max-w-5xl"
+              className="max-w-5xl mx-auto flex flex-col items-center"
             >
-              <motion.p
-                variants={textItem}
-                className="text-[10px] sm:text-sm text-cyan-400 font-medium mb-2 uppercase tracking-widest"
+              {/* Badge */}
+              <motion.div
+                variants={fadeInUp}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-cyan-300 text-sm font-medium mb-8"
               >
-                <span className="inline-block mr-2 animate-bounce">✨</span>
-                The first step to your career.
-              </motion.p>
-
-              <motion.h1
-                variants={textItem}
-                className="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6 leading-tight text-white"
-                style={{ fontFamily: "'Poppins', sans-serif" }}
-              >
-                <span className="text-3xl sm:text-5xl md:text-6xl font-light block">
-                  Start your
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                 </span>
-                <span className="text-cyan-400 text-5xl sm:text-7xl md:text-8xl block">
-                  Job Journey
+                #1 Platform for Graduate Hiring
+              </motion.div>
+
+              {/* Main Heading */}
+              <motion.h1
+                variants={fadeInUp}
+                className="text-5xl sm:text-7xl md:text-8xl font-extrabold mb-8 leading-[1.1] tracking-tight"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                <span className="block text-white drop-shadow-2xl">
+                  Kickstart your
+                </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
+                  Dream Career
                 </span>
               </motion.h1>
 
+              {/* Subheading */}
               <motion.p
-                variants={textItem}
-                className="text-sm sm:text-lg md:text-xl text-gray-400 mb-8 sm:mb-12 max-w-md sm:max-w-3xl mx-auto"
+                variants={fadeInUp}
+                className="text-lg sm:text-xl text-zinc-400 mb-12 max-w-3xl leading-relaxed"
               >
-                Explore curated graduate opportunities where innovation meets
-                career growth. That starts here.
+                Connect with top-tier companies, showcase your skills, and land
+                your dream job. The future belongs to those who build it start
+                building yours today.
               </motion.p>
-            </motion.div>
 
-            {/* Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5"
-            >
-              <motion.a
-                href="/login"
-                className="bg-white text-black  px-6 py-[10px] rounded-full font-medium text-sm sm:text-base transform-gpu select-none hover:border-white transition-all"
-                whileHover={secondaryButtonHover}
-                whileTap={buttonTap}
-                style={{ fontWeight: 500 }}
+              {/* CTA Buttons */}
+              <motion.div
+                variants={fadeInUp}
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto"
               >
-                Get Started
-              </motion.a>
-              <motion.a
-                href="/explore"
-                className="text-white flex items-center justify-center gap-3 border-2 border-white/50 px-2 py-1 sm:px-6 sm:py-2 rounded-full font-medium text-sm sm:text-base transform-gpu select-none hover:border-white transition-all"
-                whileHover={secondaryButtonHover}
-                whileTap={buttonTap}
-                style={{ fontWeight: 500 }}
-              >
-                Learn More
-                {/* <HiArrowUpRight className="ml-1" /> */}
-                {/* Replaced the icon component with an inline SVG to fix the compile error */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 ml-1 inline-block"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
+                <motion.a
+                  href="/login"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold text-base shadow-xl hover:shadow-white/10 transition-all"
                 >
-                  <path
+                  Get Started Now
+                </motion.a>
+                <motion.a
+                  href="/explore"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-base text-white bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all"
+                >
+                  Explore
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                  />
-                </svg>
-              </motion.a>
+                    className="w-4 h-4"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </motion.a>
+              </motion.div>
             </motion.div>
+
+            {/* Floating Data Points (Desktop Only) */}
+            <FloatingPoint
+              top
+              left
+              name="Active Students"
+              value="24K+"
+              delay={0}
+            />
+            <FloatingPoint
+              top
+              right
+              name="Partner Companies"
+              value="500+"
+              delay={1.5}
+            />
+            <FloatingPoint
+              bottom
+              left
+              name="Opportunities"
+              value="12K+"
+              delay={0.8}
+            />
+            <FloatingPoint
+              bottom
+              right
+              name="Success Rate"
+              value="94%"
+              delay={2.2}
+            />
           </div>
-          {/* Floating Points */}
-          <FloatingPoint top left name="Students" value="20,945" delay={1} />
-          <FloatingPoint top right name="Colleges" value="2,345" delay={2} />
-          <FloatingPoint bottom left name="Jobs" value="19,345" delay={3} />
-          <FloatingPoint bottom right name="Recruiters" value="440" delay={4} />
         </div>
       </div>
     </>
