@@ -5,27 +5,40 @@ import cookieParser from "cookie-parser";
 import AuthRoute from "./routes/auth.route.js";
 import AdminAuth from "./routes/admin.auth.route.js";
 import connectDB from "./database/db.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config({ quiet: true });
 
-// ✅ Step 1: Create app first
 const app = express();
 
-// ✅ Step 2: Middlewares in correct order
-app.use(express.json()); // parse JSON body
+// ✅ Fix for ES Modules (__dirname)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Middleware
+app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173", // React frontend
-    credentials: true, // allow cookies
+    origin: "http://localhost:5173",
+    credentials: true,
   })
 );
-app.use(cookieParser()); // read cookies first
+app.use(cookieParser());
 
-// ✅ Step 4: Routes
+// Routes
 app.use("/user", AuthRoute);
 app.use("/admin", AdminAuth);
 
-// ✅ Step 5: Connect to DB and start server
+// ✅ Serve frontend
+app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+
+// ✅ This catches all other routes and serves React index.html
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../Frontend/dist", "index.html"));
+});
+
+// Database + Server
 connectDB().then(() => {
-  app.listen(5000S);
+  app.listen(5000, () => console.log(`🚀 Server running on port 5000 ✅`));
 });

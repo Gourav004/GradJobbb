@@ -110,8 +110,8 @@ const AdminLogin = () => {
   const [formData, setFormData] = useState({
     name: "",
     collegeID: "",
-    email: "Admin1@mail.com",
-    password: "Admin1@123",
+    email: "",
+    password: "",
   });
 
   const dispatch = useDispatch();
