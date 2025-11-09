@@ -30,12 +30,10 @@ app.use(cookieParser());
 app.use("/user", AuthRoute);
 app.use("/admin", AdminAuth);
 
-// ✅ Serve frontend
-app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+app.use(express.static(path.join(__dirname, "/Frontend/dist")));
 
-// ✅ This catches all other routes and serves React index.html
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../Frontend/dist", "index.html"));
+  res.sendFile(path.join(__dirname, "/Frontend/dist", "index.html"));
 });
 
 // Database + Server
