@@ -113,7 +113,7 @@ function AppliedJobs() {
   const fetchJobs = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("http://localhost:5000/user/appliedJobs", {
+      const res = await axios.get("https://gradjob.onrender.com/user/appliedJobs", {
         withCredentials: true,
       });
 

@@ -19,7 +19,7 @@ export default function AdminViewJobs() {
   const fetchJobs = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("http://localhost:5000/admin/viewjobs", {
+      const res = await axios.get("https://gradjob.onrender.com/admin/viewjobs", {
         withCredentials: true,
       });
       setJobs(res.data);

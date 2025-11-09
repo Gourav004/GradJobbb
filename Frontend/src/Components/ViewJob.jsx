@@ -25,7 +25,7 @@ function ViewJob() {
       const timeout = setTimeout(() => setLoading(false), 2500); // fallback
 
       const res = await axios.get(
-        `http://localhost:5000/user/viewAJob/${jobID}`,
+        `https://gradjob.onrender.com/user/viewAJob/${jobID}`,
         {
           withCredentials: true,
           signal: controllerRef.current.signal,
@@ -53,7 +53,7 @@ function ViewJob() {
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/user/apply/${jobID}`,
+        `https://gradjob.onrender.com/user/apply/${jobID}`,
         {},
         { withCredentials: true, timeout: 6000 }
       );

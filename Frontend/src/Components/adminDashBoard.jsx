@@ -361,10 +361,10 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         const [studentsRes, profileRes] = await Promise.all([
-          axios.get("http://localhost:5000/admin/students", {
+          axios.get("https://gradjob.onrender.com/admin/students", {
             withCredentials: true,
           }),
-          axios.get("http://localhost:5000/admin/profile", {
+          axios.get("https://gradjob.onrender.com/admin/profile", {
             withCredentials: true,
           }),
         ]);
@@ -384,7 +384,7 @@ export default function AdminDashboard() {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/admin/logout",
+        "https://gradjob.onrender.com/admin/logout",
         {},
         { withCredentials: true }
       );

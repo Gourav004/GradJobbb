@@ -8,7 +8,7 @@ function AdminViewProfile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/admin/profile", {
+      const res = await axios.get("https://gradjob.onrender.com/admin/profile", {
         withCredentials: true,
       });
       setAdmin(res.data.admin);

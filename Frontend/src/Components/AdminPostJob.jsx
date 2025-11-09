@@ -182,7 +182,7 @@ const AdminPostJob = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/admin/postjob",
+        "https://gradjob.onrender.com/admin/postjob",
         formData,
         { withCredentials: true }
       );

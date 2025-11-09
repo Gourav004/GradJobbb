@@ -131,8 +131,8 @@ const AdminLogin = () => {
 
     try {
       const url = isSignUp
-        ? "http://localhost:5000/admin/signup"
-        : "http://localhost:5000/admin/login";
+        ? "https://gradjob.onrender.com/admin/signup"
+        : "https://gradjob.onrender.com/admin/login";
 
       const payload = isSignUp
         ? formData

@@ -24,7 +24,7 @@ function AdminViewJob() {
 
       const timeout = setTimeout(() => setLoading(false), 2500); // fallback
 
-      const res = await axios.get(`http://localhost:5000/admin/jobs/${jobID}`, {
+      const res = await axios.get(`https://gradjob.onrender.com/admin/jobs/${jobID}`, {
         withCredentials: true,
         signal: controllerRef.current.signal,
       });
@@ -41,7 +41,7 @@ function AdminViewJob() {
   const handleDelete = async (JobID) => {
     try {
       const res = await axios.delete(
-        `http://localhost:5000/admin/jobs/delete/${JobID}`,
+        `https://gradjob.onrender.com/admin/jobs/delete/${JobID}`,
         { withCredentials: true }
       );
       toast.success("Job Deleted Successfully");

@@ -9,7 +9,7 @@ function StudentProfileView() {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/profile", {
+      const res = await axios.get("https://gradjob.onrender.com/user/profile", {
         withCredentials: true,
       });
       const fetchedStudent = res.data.student;

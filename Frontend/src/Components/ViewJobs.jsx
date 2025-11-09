@@ -17,9 +17,12 @@ function ViewJobs() {
 
   const handleViewJobs = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/viewjobs", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        "https://gradjob.onrender.com/user/viewjobs",
+        {
+          withCredentials: true,
+        }
+      );
       setIsLoading(true);
       setTimeout(() => {
         setAllJobs(res.data.allJobs);

@@ -165,13 +165,13 @@ export default function StudentDashboardContent() {
         // Mock data fallbacks in case API is not reachable in this environment
         try {
           const [profileRes, appliedRes, allJobsRes] = await Promise.all([
-            axios.get("http://localhost:5000/user/profile", {
+            axios.get("https://gradjob.onrender.com/user/profile", {
               withCredentials: true,
             }),
-            axios.get("http://localhost:5000/user/appliedJobs", {
+            axios.get("https://gradjob.onrender.com/user/appliedJobs", {
               withCredentials: true,
             }),
-            axios.get("http://localhost:5000/user/viewjobs", {
+            axios.get("https://gradjob.onrender.com/user/viewjobs", {
               withCredentials: true,
             }),
           ]);
@@ -247,7 +247,7 @@ export default function StudentDashboardContent() {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/user/logout",
+        "https://gradjob.onrender.com/user/logout",
         {},
         { withCredentials: true }
       );

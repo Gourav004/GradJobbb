@@ -23,7 +23,7 @@ export default function StudentProfileEdit() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/user/profile", {
+        const res = await axios.get("https://gradjob.onrender.com/user/profile", {
           withCredentials: true,
         });
         const student = res.data.student;
@@ -51,7 +51,7 @@ export default function StudentProfileEdit() {
     e.preventDefault();
     try {
       const res = await axios.patch(
-        "http://localhost:5000/user/profile/edit",
+        "https://gradjob.onrender.com/user/profile/edit",
         {
           name,
           phone,

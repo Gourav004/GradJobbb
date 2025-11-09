@@ -128,8 +128,8 @@ const LoginSignup = () => {
     e.preventDefault();
     try {
       const url = isSignUp
-        ? "http://localhost:5000/user/signup"
-        : "http://localhost:5000/user/login";
+        ? "https://gradjob.onrender.com/user/signup"
+        : "https://gradjob.onrender.com/user/login";
       const payload = isSignUp
         ? formData
         : { email: formData.email, password: formData.password };
