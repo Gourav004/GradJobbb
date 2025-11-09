@@ -30,13 +30,15 @@ app.use(cookieParser());
 app.use("/user", AuthRoute);
 app.use("/admin", AdminAuth);
 
+// ✅ Serve frontend build files
 app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
+// ✅ Catch-all route (fix for Express v5)
+app.use((req, res) => {
+  res.sendFile(path.resolve(__dirname, "../Frontend", "dist", "index.html"));
 });
 
-// Database + Server
+// ✅ Start Server
 connectDB().then(() => {
   app.listen(5000, () => console.log(`🚀 Server running on port 5000 ✅`));
 });
