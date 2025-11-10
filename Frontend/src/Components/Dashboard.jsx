@@ -678,9 +678,6 @@ export default function StudentDashboardContent() {
   );
 }
 
-// --- WRAPPER COMPONENT (Fixes Router Context Issue) ---
-
-// --- SUB-COMPONENTS (Placed outside for cleaner main component) ---
 function StatCard({ title, value, icon: Icon, color, delay }) {
   const colorVariants = {
     cyan: "from-cyan-500/20 to-cyan-500/0 text-cyan-500",
@@ -696,7 +693,7 @@ function StatCard({ title, value, icon: Icon, color, delay }) {
       className="relative bg-zinc-900/40 border border-white/5 p-6 rounded-3xl overflow-hidden group hover:border-white/10 transition-colors"
     >
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${colorVariants[color]} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+        className={`absolute inset-0 bg-gradient-to-br ${colorVariants[color]} opacity-40 transition-opacity duration-500`}
       />
       <div className="relative z-10 flex justify-between items-start">
         <div>
@@ -719,7 +716,6 @@ function StatCard({ title, value, icon: Icon, color, delay }) {
 
 function FeaturedJobCard({ job, index }) {
   const navigate = useNavigate();
-  // Simple internal icons for this sub-component to avoid prop drilling heavily
   const BuildingIcon = (props) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
