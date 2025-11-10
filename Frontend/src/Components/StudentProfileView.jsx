@@ -1,11 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 
 function StudentProfileView() {
   const [profile, setProfile] = useState({});
-  const student = useSelector((store) => store.student);
 
   const fetchProfile = async () => {
     try {
@@ -39,7 +37,7 @@ function StudentProfileView() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative w-full max-w-7xl mx-auto bg-[#111111]/70 backdrop-blur-lg border border-gray-800 rounded-3xl shadow-2xl p-8 flex flex-col lg:flex-row flex-wrap items-center justify-between gap-8 transition-all duration-500 hover:shadow-[0_0_25px_rgba(0,255,255,0.2)] mt-16"
+        className="relative w-full max-w-7xl mx-auto bg-[#111111]/70 backdrop-blur-lg border border-gray-800 rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col lg:flex-row items-center justify-between gap-8 transition-all duration-500 hover:shadow-[0_0_25px_rgba(0,255,255,0.2)] mt-16"
       >
         {/* Profile Image */}
         <motion.div
@@ -54,7 +52,7 @@ function StudentProfileView() {
               "https://imgs.search.brave.com/aT0xgQwDvH5DvcMVLSu7j8PcNMFRxfHfLa4LWI7T8io/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni84ODk1Lzg4OTU0/NTgucG5nP3NlbXQ9/YWlzX3doaXRlX2xh/YmVs"
             }
             alt="Profile"
-            className="w-40 h-40 object-cover rounded-full border-4 border-cyan-500 shadow-lg group-hover:scale-105 transition-all duration-500"
+            className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full border-4 border-cyan-500 shadow-lg group-hover:scale-105 transition-all duration-500"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src =
@@ -71,13 +69,14 @@ function StudentProfileView() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="flex-1 min-w-[280px] text-center lg:text-left"
         >
-          <h2 className="text-3xl font-bold tracking-wide mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-wide mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             {profile.name}
           </h2>
 
-          <div className="flex flex-col flex-wrap gap-2 text-gray-300">
+          <div className="flex flex-col flex-wrap gap-2 text-gray-300 text-sm md:text-base">
             <p className="flex flex-wrap justify-center lg:justify-start items-center gap-2">
-              <strong className="text-cyan-300">Email:</strong> {profile.email}
+              <strong className="text-cyan-300">Email:</strong>{" "}
+              <span className="break-all">{profile.email}</span>
             </p>
             <p className="flex flex-wrap justify-center lg:justify-start items-center gap-2">
               <strong className="text-cyan-300">Mobile:</strong>{" "}
@@ -90,17 +89,16 @@ function StudentProfileView() {
           </div>
         </motion.div>
 
-        {/* Buttons */}
+        {/* Buttons - FIXED ALIGNMENT */}
         <motion.div
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-row lg:flex-col gap-4 justify-center flex-shrink-0"
+          // Changed: flex-col on mobile, sm:flex-row on tablets, lg:flex-col on desktop
+          className="flex flex-col sm:flex-row lg:flex-col gap-4 justify-center items-center flex-shrink-0 w-full sm:w-auto"
         >
-          <a href="/editProfile">
-            {" "}
-            <button className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-2.5 rounded-full cursor-pointer font-medium text-white hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-cyan-500/30 min-w-[160px]">
-              {" "}
+          <a href="/editProfile" className="w-full sm:w-auto">
+            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-2.5 rounded-full cursor-pointer font-medium text-white hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-cyan-500/30 min-w-[160px]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -113,20 +111,19 @@ function StudentProfileView() {
                 strokeLinejoin="round"
                 className="flex-shrink-0"
               >
-                {" "}
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>{" "}
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>{" "}
-              </svg>{" "}
-              Edit Profile{" "}
-            </button>{" "}
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              Edit Profile
+            </button>
           </a>
+
           <a
             href="/dashboard"
-            className="inline-block mb-3 cursor-pointer group"
+            className="inline-block cursor-pointer group w-full sm:w-auto"
           >
-            {" "}
-            <button className=" flex items-center gap-2 bg-[#0d0d0d] border border-cyan-500/40 px-7 py-3 rounded-full font-semibold text-cyan-300 transition-all duration-300 ease-out shadow-[0_0_10px_rgba(0,255,255,0.15)] hover:shadow-[0_0_20px_rgba(0,255,255,0.35)] hover:border-cyan-400 hover:scale-105 active:scale-95 ">
-              {" "}
+            {/* Removed mb-3 and added w-full for mobile consistency */}
+            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0d0d0d] border border-cyan-500/40 px-7 py-2.5 rounded-full font-semibold text-cyan-300 transition-all duration-300 ease-out shadow-[0_0_10px_rgba(0,255,255,0.15)] hover:shadow-[0_0_20px_rgba(0,255,255,0.35)] hover:border-cyan-400 hover:scale-105 active:scale-95 min-w-[160px]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -135,15 +132,14 @@ function StudentProfileView() {
                 stroke="currentColor"
                 className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1"
               >
-                {" "}
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-                />{" "}
-              </svg>{" "}
-              <span className="text-[15px]">Dashboard</span>{" "}
-            </button>{" "}
+                />
+              </svg>
+              <span className="text-[15px]">Dashboard</span>
+            </button>
           </a>
         </motion.div>
 
@@ -184,24 +180,32 @@ function StudentProfileView() {
             title: "Social Handles",
             content: (
               <>
-                <p>
+                <p className="truncate">
                   <strong className="text-cyan-300">GitHub:</strong>{" "}
                   <a
-                    className={profile.githubLink ? "link" : ""}
+                    className={
+                      profile.githubLink
+                        ? "link hover:text-cyan-300 transition-colors"
+                        : ""
+                    }
                     href={profile.githubLink || "#"}
                     target="_blank"
                   >
-                    {profile.githubLink || "N/A"}
+                    {profile.githubLink ? "View Profile" : "N/A"}
                   </a>
                 </p>
-                <p>
-                  <strong className="text-cyan-300 mt-3">LinkedIn:</strong>{" "}
+                <p className="mt-3 truncate">
+                  <strong className="text-cyan-300">LinkedIn:</strong>{" "}
                   <a
-                    className={profile.linkedinLink ? "link" : ""}
+                    className={
+                      profile.linkedinLink
+                        ? "link hover:text-cyan-300 transition-colors"
+                        : ""
+                    }
                     href={profile.linkedinLink || "#"}
                     target="_blank"
                   >
-                    {profile.linkedinLink || "N/A"}
+                    {profile.linkedinLink ? "View Profile" : "N/A"}
                   </a>
                 </p>
               </>
@@ -212,7 +216,17 @@ function StudentProfileView() {
             content: (
               <p className="text-gray-300 text-sm break-words whitespace-pre-wrap overflow-hidden">
                 <strong className="text-cyan-300">Link:</strong>{" "}
-                {profile.resumeLink || "Not uploaded"}
+                {profile.resumeLink ? (
+                  <a
+                    href={profile.resumeLink}
+                    target="_blank"
+                    className="hover:text-cyan-300 underline transition-colors"
+                  >
+                    View Resume
+                  </a>
+                ) : (
+                  "Not uploaded"
+                )}
               </p>
             ),
           },

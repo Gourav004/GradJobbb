@@ -1,16 +1,21 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import useNavigate from "react-router-dom";
 import { motion } from "framer-motion";
 
 function AdminViewProfile() {
   const [admin, setAdmin] = useState({});
   const [studentCount, setStudentCount] = useState(0);
+  const navigate = useNavigate();
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get("https://gradjob.onrender.com/admin/profile", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        "https://gradjob.onrender.com/admin/profile",
+        {
+          withCredentials: true,
+        }
+      );
       setAdmin(res.data.admin);
       setStudentCount(res.data.students);
     } catch (error) {
@@ -134,7 +139,7 @@ function AdminViewProfile() {
             </div>
 
             <a
-              href="/admin/students"
+              onClick={() => navigate("/admin/students")}
               className="inline-block mb-6 cursor-pointer group relative top-7"
             >
               <button
