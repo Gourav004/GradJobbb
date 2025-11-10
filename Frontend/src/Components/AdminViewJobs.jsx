@@ -19,10 +19,17 @@ export default function AdminViewJobs() {
   const fetchJobs = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("https://gradjob.onrender.com/admin/viewjobs", {
-        withCredentials: true,
-      });
-      setJobs(res.data);
+      const res = await axios.get(
+        "https://gradjob.onrender.com/admin/viewjobs",
+        {
+          withCredentials: true,
+        }
+      );
+      const sortedJobs = res.data.sort(
+        (a, b) => new Date(b.postedAt || 0) - new Date(a.postedAt || 0)
+      );
+
+      setJobs(sortedJobs);
     } catch (error) {
       console.error("Error fetching jobs:", error);
     } finally {

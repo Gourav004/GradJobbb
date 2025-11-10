@@ -31,13 +31,9 @@ function AdminViewProfile() {
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white flex justify-center items-center p-6 relative overflow-hidden">
       {/* Lanyard aur Card ko wrap karne wala div for rotation */}
       <motion.div
-        initial={{ opacity: 0, y: -200, rotateX: 90, scale: 0.8 }} // Initial state: upar se rotate hota hua, thoda chhota
-        animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }} // Final state: neeche, normal, bina rotation
-        //
-        // === YEH HAI FIX ===
-        // Custom array [0.6, 0.05, -0.01, 0.9] ko "easeInOut" string se badal diya hai
-        //
-        transition={{ duration: 1.2, ease: "easeInOut" }} // Smooth professional animation
+        initial={{ opacity: 0, y: -200, rotateX: 90, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+        transition={{ duration: 1.2, ease: "easeInOut" }}
         className="flex flex-col items-center relative"
       >
         {/* Lanyard */}
@@ -138,41 +134,39 @@ function AdminViewProfile() {
               </p>
             </div>
 
-            <a
+            <button
               onClick={() => navigate("/admin/students")}
-              className="inline-block mb-6 cursor-pointer group relative top-7"
+              className="
+                  group relative top-7 cursor-pointer
+                  flex items-center gap-2
+                  bg-[#0d0d0d] border border-cyan-500/40
+                  px-6 py-2 rounded-full font-semibold text-cyan-300
+                  transition-all duration-300 ease-out
+                  shadow-[0_0_10px_rgba(0,255,255,0.15)]
+                  hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
+                  hover:border-cyan-400
+                  hover:scale-105
+                  active:scale-95
+                  mb-6
+                "
             >
-              <button
-                className="
-      flex items-center gap-2  cursor-pointer
-      bg-[#0d0d0d] border border-cyan-500/40
-      px-6 py-2 rounded-full font-semibold text-cyan-300
-      transition-all duration-300 ease-out
-      shadow-[0_0_10px_rgba(0,255,255,0.15)]
-      hover:shadow-[0_0_20px_rgba(0,255,255,0.35)]
-      hover:border-cyan-400
-      hover:scale-105
-      active:scale-95
-    "
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-                  />
-                </svg>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                />
+              </svg>
 
-                <span className="text-[15px]">Dashboard</span>
-              </button>
-            </a>
+              <span className="text-[15px]">Dashboard</span>
+            </button>
           </div>
         </div>
       </motion.div>
