@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { GoogleGenAI } from "@google/genai";
-import Navbar from "../Ui/ChatNav.jsx";
-import "../App.css";
-import "../index.css";
+import Navbar from "./Components/Navbar.jsx";
+import "./App.css";
+import "./index.css";
 import { SyncLoader } from "react-spinners";
 import Markdown from "react-markdown";
 
-function Chatbot() {
+function App() {
+  // ✅ Initialize Gemini client
   const ai = new GoogleGenAI({
     apiKey: "AIzaSyCQPiXsd1NeZOLiADsWE2s1qb_1C7E9YjY",
   });
@@ -17,6 +18,7 @@ function Chatbot() {
   ]);
   const [loading, setLoading] = useState(false);
 
+  // ✅ Function to get AI response
   async function getResponse() {
     if (!prompt.trim()) return;
     setLoading(true);
@@ -56,7 +58,7 @@ function Chatbot() {
     <div className="bg-black text-white min-h-screen flex flex-col items-center">
       <Navbar />
 
-      {/* 💬 Chat Area (Centered like ChatGPT) */}
+      {/* 💬 Chat Area (like ChatGPT layout) */}
       <div className="flex-1 w-full max-w-4xl px-4 sm:px-6 pt-24 pb-32 overflow-y-auto space-y-4">
         {messages.map((item, i) => (
           <div
@@ -68,8 +70,8 @@ function Chatbot() {
             <div
               className={`${
                 item.role === "user"
-                  ? "max-w-[65%] sm:max-w-[55%] bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-br-none"
-                  : "max-w-[85%] sm:max-w-[80%] bg-zinc-900 text-gray-100 rounded-bl-none"
+                  ? "max-w-[75%] sm:max-w-[55%] bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-br-none"
+                  : "w-[95%] sm:max-w-[80%] bg-zinc-900 text-gray-100 rounded-bl-none"
               } p-3 sm:p-4 rounded-2xl text-[15px] leading-relaxed shadow-md`}
             >
               <Markdown>{item.content}</Markdown>
@@ -79,14 +81,14 @@ function Chatbot() {
 
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-gray-800 text-gray-100 rounded-2xl p-3 max-w-[60%]">
+            <div className="bg-gray-800 text-gray-100 rounded-2xl p-3 w-[95%] sm:max-w-[80%]">
               <SyncLoader color="#00FFFF" size={5} />
             </div>
           </div>
         )}
       </div>
 
-      {/* 📝 Input Bar (Same width as chat) */}
+      {/* 📝 Input Bar (fixed at bottom, full width) */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl bg-[#111] border-t border-gray-800 p-1 sm:p-4 shadow-[0_-4px_30px_rgba(0,0,0,0.4)]">
         <div className="flex items-center bg-[#1e1e1e] w-full px-3 sm:px-5 py-1 sm:py-3 rounded-xl border border-gray-600 focus-within:border-cyan-400 transition">
           <input
@@ -132,4 +134,4 @@ function Chatbot() {
   );
 }
 
-export default Chatbot;
+export default App;

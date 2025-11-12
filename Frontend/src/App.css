@@ -73,9 +73,9 @@
 }
 
 strong{
-    font-size : 25px;
-    margin: 7px 5px;
-    display: block;
+    font-size : 18px;
+    margin: 5px 3px;
+    color: rgb(87, 241, 241);
 }
 /* code{
     background-color: black;
