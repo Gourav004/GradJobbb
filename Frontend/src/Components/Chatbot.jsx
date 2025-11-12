@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { GoogleGenAI } from "@google/genai";
-import Navbar from "./Components/Navbar.jsx";
+import Navbar from "../Ui/ChatNav.jsx";
 import "../App.css";
 import "../index.css";
 import { SyncLoader } from "react-spinners";
