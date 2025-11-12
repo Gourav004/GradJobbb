@@ -20,6 +20,7 @@ import AdminPostJob from "./Components/AdminPostJob.jsx";
 import DashboardContent from "./Components/adminDashBoard.jsx";
 import StudentDashboardContent from "./Components/Dashboard.jsx";
 import Showcase from "./Components/Showcase.jsx";
+import Chatbot from "./Components/Chatbot.jsx";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="/admin/viewJob/:id" element={<AdminViewJob />} />
           <Route path="/admin/postJob" element={<AdminPostJob />} />
           <Route path="/showcase" element={<Showcase />} />
+          <Route path="/chatai" element={<Chatbot />} />
         </Routes>
       </BrowserRouter>
     </Provider>
