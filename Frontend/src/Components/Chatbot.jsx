@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { GoogleGenAI } from "@google/genai";
-import Navbar from "./Components/Navbar.jsx";
-import "./App.css";
-import "./index.css";
+import Navbar from "../Ui/ChatNav.jsx";
+import "../App.css";
+import "../index.css";
 import { SyncLoader } from "react-spinners";
 import Markdown from "react-markdown";
 
@@ -17,7 +17,7 @@ function App() {
     {
       role: "ai",
       content:
-        "Hello! I am **UI Forge AI**. How can I help you craft code today?",
+        "Hello! I am **GradBot** assistant. How can I help in your study today?",
     },
   ]);
   const [loading, setLoading] = useState(false);

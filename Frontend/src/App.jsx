@@ -28,7 +28,6 @@ function App() {
       <BrowserRouter>
         {/* Toast container */}
         <Toaster position="top-center" reverseOrder={false} />
-
         <Routes>
           <Route path="/" element={<Hero />} />
           <Route path="/explore" element={<Explore />} />
