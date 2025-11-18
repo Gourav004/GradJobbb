@@ -53,70 +53,128 @@
   border-color: transparent;          /* remove border when glow active */
 }
 
+/* Custom Scrollbar (Global) */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
-
-/* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #0a0a0a;
 }
-
-/* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #27272a; /* Zinc-800 */
+  border-radius: 10px;
 }
-
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #22d3ee; /* Cyan hover */
 }
 
-strong{
-    font-size : 18px;
-    margin: 5px 3px;
-    color: rgb(87, 241, 241);
+/* --- AI Response Container (The "Dabba") --- */
+.styled-response {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  
+  /* The Glass/Card Effect */
+  background: #0a0a0a;
+  border: 1px solid #27272a; /* Zinc-800 border */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 
+              0 0 15px rgba(34, 211, 238, 0.05); /* Slight Cyan Glow */
 }
-/* code{
-    background-color: black;
-    padding: 2px 4px;
-    border-radius: 3px;
-} */
 
-li , ul {
-    margin-top: 1vh;
-    margin-left: 1vw;
-    margin-bottom: 1vh;
+/* --- Typography Inside AI Response --- */
+
+/* Paragraphs */
+.styled-response p {
+  color: #d4d4d8; /* Zinc-300 */
+  margin-bottom: 1.2rem;
+  line-height: 1.75;
+  font-size: 0.95rem;
 }
-/* Code block container */
-pre {
-  background-color: #201f1f;       /* dark background */
-  color: #f8f8f2;                  /* light text */
-  padding:10px;
+
+/* Pseudo-Headings (Paragraphs starting with Strong) */
+.styled-response p:has(> strong:only-child) {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  padding-left: 1rem;
+  border-left: 3px solid #22d3ee; /* Cyan Bar */
+  background: linear-gradient(90deg, rgba(34,211,238,0.05) 0%, transparent 100%);
+  border-radius: 0 4px 4px 0;
+}
+
+.styled-response p > strong:first-child {
+  display: block;
+  font-size: 1.1rem;
+  color: #22d3ee;
+  margin-bottom: 0.25rem;
+}
+
+/* General Bold Text (Highlights) */
+.styled-response strong {
+  color: #67e8f9; /* Light Cyan */
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.15);
+}
+
+/* --- Code Blocks (The Dark Box) --- */
+.styled-response pre {
+  background: #121212;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.85rem;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+/* Scrollbar specific to Code Blocks */
+.styled-response pre::-webkit-scrollbar {
+  height: 6px;
+}
+.styled-response pre::-webkit-scrollbar-track {
+  background: #18181b;
+  border-radius: 0 0 12px 12px;
+}
+.styled-response pre::-webkit-scrollbar-thumb {
+  background: #3f3f46;
   border-radius: 10px;
-  overflow-x: auto;                /* enable horizontal scroll */
-  font-family: "Fira Code", monospace;
-  line-height: 1.5;
-  border: 1px solid #444;
-  box-shadow: 0 4px 10px rgba(32, 32, 32, 0.3);
+}
+.styled-response pre::-webkit-scrollbar-thumb:hover {
+  background: #22d3ee;
 }
 
-/* 👇 Scrollbar styling */
-pre::-webkit-scrollbar {
-  height: 5px; 
-                    /* scrollbar height */
+/* --- Inline Code (`Shape`) --- */
+.styled-response :not(pre) > code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(34, 211, 238, 0.08);
+  color: #a5f3fc;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  border: 1px solid rgba(34, 211, 238, 0.15);
 }
 
-pre::-webkit-scrollbar-track {
-  background: white;             /* track (background) color */
-  border-radius: 5px;
+/* --- Lists --- */
+.styled-response ul, 
+.styled-response ol {
+  margin: 1rem 0 1.5rem 1.5rem;
+  padding-left: 1rem;
+  border-left: 1px solid #27272a;
 }
 
-pre::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #161616, #19191a); /* cyan gradient */
-  border-radius: 10px;
+.styled-response li {
+  margin-bottom: 0.5rem;
+  color: #a1a1aa;
 }
 
-pre::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(90deg, #232424, #161616);
+h2{
+  font-size: 25px;
+  font-weight: 700;
+  color: #22d3ee;
+  padding-left: 1rem;
+  margin-bottom: 10px;
+  border-left: 3px solid #22d3ee; /* Cyan Bar */
+  background: linear-gradient(90deg, rgba(34,211,238,0.05) 0%, transparent 100%);
+  border-radius: 0 4px 4px 0;
 }

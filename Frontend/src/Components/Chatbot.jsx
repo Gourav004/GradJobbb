@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GoogleGenAI } from "@google/genai";
-import Navbar from "../Ui/ChatNav.jsx";
-import "../App.css";
-import "../index.css";
+import Navbar from "./Components/Navbar.jsx";
+import "./App.css";
+import "./index.css";
 import { SyncLoader } from "react-spinners";
 import Markdown from "react-markdown";
 
@@ -14,9 +14,23 @@ function App() {
 
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState([
-    { role: "ai", content: "Hi! I’m your AI assistant 🤖" },
+    {
+      role: "ai",
+      content:
+        "Hello! I am **UI Forge AI**. How can I help you craft code today?",
+    },
   ]);
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null); // For auto-scrolling
+
+  // Auto-scroll to bottom
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
 
   // ✅ Function to get AI response
   async function getResponse() {
@@ -47,7 +61,7 @@ function App() {
       console.error("Gemini Error:", err);
       setMessages([
         ...newMessages,
-        { role: "ai", content: "Something went wrong 😢" },
+        { role: "ai", content: "Something went wrong. Please try again. 😢" },
       ]);
     } finally {
       setLoading(false);
@@ -55,76 +69,87 @@ function App() {
   }
 
   return (
-    <div className="bg-black text-white min-h-screen flex flex-col items-center">
+    <div className="bg-[#050505] min-h-screen flex flex-col relative font-sans text-gray-100 selection:bg-cyan-500/30">
       <Navbar />
 
-      {/* 💬 Chat Area (like ChatGPT layout) */}
-      <div className="flex-1 w-full max-w-4xl px-4 sm:px-6 pt-24 pb-32 overflow-y-auto space-y-4">
-        {messages.map((item, i) => (
-          <div
-            key={i}
-            className={`flex w-full ${
-              item.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
+      {/* 💬 Chat Area */}
+      <div className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-36 overflow-y-auto space-y-6 scroll-smooth">
+        {messages.map((item, i) => {
+          const isUser = item.role === "user";
+
+          return (
             <div
-              className={`${
-                item.role === "user"
-                  ? "max-w-[75%] sm:max-w-[55%] bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-br-none"
-                  : "w-[95%] sm:max-w-[80%] bg-zinc-900 text-gray-100 rounded-bl-none"
-              } p-3 sm:p-4 rounded-2xl text-[15px] leading-relaxed shadow-md`}
+              key={i}
+              className={`flex w-full ${
+                isUser ? "justify-end" : "justify-start"
+              }`}
             >
-              <Markdown>{item.content}</Markdown>
+              <div
+                className={`relative max-w-[90%] sm:max-w-[85%] p-4 sm:p-6 rounded-2xl text-[15px] shadow-lg
+                  ${
+                    isUser
+                      ? "bg-gradient-to-br from-cyan-600 to-blue-600 text-white rounded-br-md border border-cyan-500/30"
+                      : "styled-response rounded-bl-md" // ✅ Uses our Custom CSS Class here
+                  }`}
+              >
+                {/* If it's User, just text. If AI, use Markdown */}
+                {isUser ? (
+                  <p className="leading-relaxed font-medium">{item.content}</p>
+                ) : (
+                  <Markdown>{item.content}</Markdown>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {loading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-800 text-gray-100 rounded-2xl p-3 w-[95%] sm:max-w-[80%]">
-              <SyncLoader color="#00FFFF" size={5} />
+          <div className="flex justify-start w-full">
+            <div className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-4 w-fit shadow-lg flex items-center gap-3">
+              <span className="text-cyan-400 text-sm font-mono animate-pulse">
+                AI Thinking...
+              </span>
+              <SyncLoader color="#22d3ee" size={6} margin={3} />
             </div>
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* 📝 Input Bar (fixed at bottom, full width) */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl bg-[#111] border-t border-gray-800 p-1 sm:p-4 shadow-[0_-4px_30px_rgba(0,0,0,0.4)]">
-        <div className="flex items-center bg-[#1e1e1e] w-full px-3 sm:px-5 py-1 sm:py-3 rounded-xl border border-gray-600 focus-within:border-cyan-400 transition">
+      {/* 📝 Input Bar (Floating & Glassmorphism) */}
+      <div className="fixed bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/90 to-transparent pb-6 pt-10 px-4 pointer-events-none flex justify-center">
+        <div className="pointer-events-auto w-full max-w-4xl bg-[#111]/80 backdrop-blur-xl border border-zinc-700 rounded-2xl shadow-2xl shadow-cyan-900/20 p-2 flex items-center gap-2 transition-all focus-within:border-cyan-500/50 focus-within:ring-1 focus-within:ring-cyan-500/20">
           <input
             type="text"
-            placeholder="Type your message..."
+            placeholder="Ask anything about Code..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && getResponse()}
-            className="flex-1 bg-transparent text-white placeholder-gray-400 outline-none text-[15px] sm:text-[17px]"
+            className="flex-1 bg-transparent text-gray-100 placeholder-gray-500 outline-none text-[16px] px-4 py-3"
           />
 
           <button
             onClick={getResponse}
-            disabled={loading}
-            className="ml-2 sm:ml-3 px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base font-semibold text-black 
-                       bg-gradient-to-r from-cyan-400 to-blue-400 
-                       rounded-lg hover:from-cyan-500 hover:to-blue-300 
-                       active:scale-95 transition-all duration-200 
-                       disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || !prompt.trim()}
+            className="px-4 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              "..."
+              <span className="animate-spin block text-lg">⟳</span>
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="black"
-                strokeWidth="2"
+                stroke="currentColor"
+                strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
-                <path d="m21.854 2.147-10.94 10.939" />
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
             )}
           </button>
